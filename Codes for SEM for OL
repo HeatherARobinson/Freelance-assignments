@@ -37,4 +37,10 @@ tofu.model<-'Customer_preference =~Waterpack + Texture + Size + Promo
 
 #Now fit the model (run a factor analysis to check how well the manifest variables explain the latent variable):
 tofu.fit<-cfa(model=tofu.model, data=Tofu)
-summary(tofu.fit)
+summary(tofu.fit, standardized=TRUE, fit.measures=TRUE)
+
+#Interpreting: Different manifest variables have different loadings on the latent variables.
+#Std.all in the output shows these loadings. Close to 1 shows a strong relationship to the latent variable.
+#0.3 is typically considered an acceptable loading.
+#CFI and TLI should be between 0.9 and 1 to show that the model fits the data
+
