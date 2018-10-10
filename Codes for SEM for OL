@@ -1,0 +1,12 @@
+#Creating an SEM to describe the relationship between manifest variables and latent umbrella constructs
+#Using the Lavaan package
+
+#First, a basic factor analysis
+
+library(Lavaan)
+# example: model<-'latent_variable =~manifest_variable1 + manifest_variable2 + manifest_variable3'
+model<-'Customer_preference =~Waterpack + Texture + Size + Promotion'
+
+# example: visualmodel<-'visual =~x1 + x2 + x3'
+visualmodel<-'visual =~x5 + x8 + x9 + x10'
+
