@@ -1,7 +1,23 @@
 #Creating an SEM to describe the relationship between manifest variables and latent umbrella constructs
 #Using the Lavaan package
 
-#First, a basic factor analysis
+Tofu<-read.csv("Tofu.csv")
+New<-as.factor(New)
+Temp<-as.factor(Temp)
+SE<-as.factor(SE)
+NE<-as.factor(NE)
+Canada<-as.factor(Canada)
+Food_service<-as.factor(Food_service)
+Retail<-as.factor(Retail)
+Club<-as.factor(Club)
+Private_label<-as.factor(Private_label)
+Friday_ship<-as.factor(Friday_ship)
+Major_holiday<-as.factor(Major_holiday)
+Other_holiday<-as.factor(Other_holiday)
+Waterpack<-as.factor(Waterpack)
+
+library(psych)
+fa.poly
 
 library(Lavaan)
 
