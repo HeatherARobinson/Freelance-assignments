@@ -18,6 +18,9 @@ Waterpack<-as.factor(Waterpack)
 
 library(lavaan)
 Tofu$Week <- Tofu$Week/100 
+Tofu$Texture <- Tofu$Texture/10 
+Tofu$Temp <- Tofu$Temp*10
+Tofu$Season <- Tofu$Season/10 
 #Each model should contain at least 3 variables so that the latent variable can be estimated
 #because the degrees of freedom are based on the variables, not on sample size.
 #Do not construct a model that has 0 degrees of freedom
@@ -25,7 +28,7 @@ Tofu$Week <- Tofu$Week/100
 #Define the model:
 # example: model<-'latent_variable =~manifest_variable1 + manifest_variable2 + manifest_variable3'
 
-tofu.model<-'Sales_group =~Private_label + Club + Retail + Food_service
+tofu.model<-'Sales_group =~Private_label + a*Club + a*Retail + a*Food_service
             Seasonal =~Major_holiday + Other_holiday + Week + Season'
             
             Shipping =~Friday_ship + Other_site
