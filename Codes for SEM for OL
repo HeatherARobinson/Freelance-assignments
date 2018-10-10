@@ -25,8 +25,10 @@ library(lavaan)
 #Define the model:
 # example: model<-'latent_variable =~manifest_variable1 + manifest_variable2 + manifest_variable3'
 
-tofu.model<-'Customer_preference =~Waterpack + Texture + Size + Promo
-            Seasonal =~Major_holiday + Other_holiday + Week + Season
+tofu.model<-'Sales_group =~Private_label + a*Club + a*Retail + a*Food_service'
+
+tofu.model<-'Seasonal =~Major_holiday + Other_holiday + Week + Season
+            
             Shipping =~Friday_ship + Other_site
             Sales_group =~Private_label + Club + Retail + Food_service
             Selling_area =~ Canada + SE + NE
