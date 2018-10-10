@@ -27,11 +27,11 @@ library(lavaan)
 
 tofu.model<-'Sales_group =~Private_label + a*Club + a*Retail + a*Food_service'
 
-tofu.model<-'Seasonal =~Major_holiday + Other_holiday + Week + Season
+tofu.model<-'Seasonal =~Major_holiday + a*Other_holiday + a*Week + a*Season
             
             Shipping =~Friday_ship + Other_site
-            Sales_group =~Private_label + Club + Retail + Food_service
-            Selling_area =~ Canada + SE + NE
+            Customer_preference =~ Texture + Size
+            Selling_area =~ Canada + a*SE + a*NE
             Product_establishment =~ Temp + New'
 
 #The model can either be scaled by setting the variance of the latent variable to 1, and dividing this between the manifest variables
