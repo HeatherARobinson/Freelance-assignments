@@ -16,7 +16,7 @@ Major_holiday<-as.factor(Major_holiday)
 Other_holiday<-as.factor(Other_holiday)
 Waterpack<-as.factor(Waterpack)
 
-library(Lavaan)
+library(lavaan)
 
 #Each model should contain at least 3 variables so that the latent variable can be estimated
 #because the degrees of freedom are based on the variables, not on sample size.
