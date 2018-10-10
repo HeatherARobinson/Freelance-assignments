@@ -17,7 +17,7 @@ Other_holiday<-as.factor(Other_holiday)
 Waterpack<-as.factor(Waterpack)
 
 library(lavaan)
-
+Tofu$Week <- Tofu$Week/100 
 #Each model should contain at least 3 variables so that the latent variable can be estimated
 #because the degrees of freedom are based on the variables, not on sample size.
 #Do not construct a model that has 0 degrees of freedom
