@@ -28,9 +28,9 @@ library(Lavaan)
 pref.model<-'Customer_preference =~Waterpack + Texture + Size + Promotion
             Seasonal =~Major_holiday + Other_holiday + Week + Other_season
             Shipping =~Friday_ship + Other_site
-            Sales_group =~
+            Sales_group =~Private_label + Club + Retail + Food_service
             Selling_area =~ Canada + SE + NE
-            Product_establishment =~ Temp + New
+            Product_establishment =~ Temp + New'
 
 #The model can either be scaled by setting the variance of the latent variable to 1, and dividing this between the manifest variables
 #OR we can set the variance of one of the manifest variables to 1 (more commonly used approach). This is the Lavaan default.
