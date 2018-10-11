@@ -35,11 +35,21 @@ Selling_area =~ Canada + SE + NE
 Seasonal ~~ 0*Selling_area
 Product_establishment =~ Temporary + a*New
 Seasonal ~~ 0*Product_establishment
-Customer_preference =~ Texture + a*Size + a*Promotion'
+Customer_preference =~ Texture + a*Size + a*Promotion
+NE ~~ New
+SE ~~ New
+NE ~~ Temporary
+SE ~~ Temporary
+Customer_preference =~ Canada
+Customer_preference =~ SE'
+
+anova(tofu.model1,tofu.model2)- confirm any additions with ANOVA.
+
+#In the model code, #~ shows that a manifest variable is predicting a latent variable. ~~ shows a correlation between variables.
 
 tofu.fit<-cfa(model=tofu.model, data=Tofu)
 summary(tofu.fit, standardized=TRUE, fit.measures=TRUE)
-
+modificationindices(tofu.fit, sort = TRUE)
 #also include Waterpack
 
 #Shipping =~Friday_Shipping + a*Other_Site
