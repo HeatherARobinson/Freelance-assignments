@@ -18,7 +18,7 @@ library(lavaan)
 Tofu$season <- Tofu$season/10
 Tofu$Texture <- Tofu$Texture/10
 Tofu$Flavor <- as.character(Tofu$Flavor)
-Tofu$week <- Tofu$week/1000
+Tofu$week <- Tofu$week/100
 
 #Each latent construct should contain at least 3 variables so that the latent variable can be estimated
 #because the degrees of freedom are based on the variables, not on sample size.
@@ -42,25 +42,27 @@ Sales_Group =~ Private_Label + Club + Retail'
 
 tofu.fit.a<-cfa(model=tofu.model.a, data=Tofu)
 
-#This first model won't converge because at least 2 latent variables overlap and need combining. 
-#There are two few degrees of freedom to have latent constucts consisting of fewer than 3 variables
-#I have tried promotion in product_establishment, Seasonal and customer_preference.
-#Based on optimising one factor models for each factor using modificationindices()I have also added in observed correlations that are important to fit.
-#Based on a 1 factor model of season I have dropped week
-#I have edited the groupings until they converge
+#This first model won't converge because at least 2 latent variables overlap and need combining (matrix is not positive-definite)
+#There are two few degrees of freedom to have latent constucts consisting of fewer than 3 variables-
 #Size is now with Sales group in a variable called Presentation- because large sizes were only for retail and this corrected an overlap
 #of what was being measured in Customer preference and Sales group.
 #Shipping variables are now grouped with Sales area due to the correlations between Friday shipping and other site manufacture and distribution area
+#Based on a 1 factor model of season I have dropped week as there is too much overlap with the other variables
 
 
 tofu.model.b<-'Seasonal =~major_holiday + other_holidays + season
-Customer_preference =~ Texture + Flavor 
+
+Customer_preference =~ Texture + Flavor + Promotion + Temporary + New
+
 Presentation =~Private_Label + Club + Retail + Size
+
 Distribution =~Canada + SE + NE + Friday_Shipping + Other_Site'
+
 tofu.fit.b<-cfa(model=tofu.model.b, data=Tofu)
+
 summary(tofu.fit.b, standardized=TRUE, fit.measures=TRUE)
 
-#A solution has still "not been found" but the model is at least converging
+#A solution has still "not been found" 
 #The summary shows negative variance from private label so this needs adjusting
 var(Tofu$Private_Label)
 
