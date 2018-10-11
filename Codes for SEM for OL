@@ -54,11 +54,10 @@ Customer_preference =~ Texture + Size + Promotion + Waterpack +  Canada + SE + N
 
 Product_establishment =~ Temporary + New
 
-Sales_Group =~ Private_Label + Club + Retail'
+Sales_Group =~ Private_Label + a*Club + a*Retail'
 
 tofu.fit.b<-cfa(model=tofu.model.b, data=Tofu)
 summary(tofu.fit.b, standardized=TRUE, fit.measures=TRUE)
-
 
 #Combining the groups for sales area and Customer preference  is essential to making the model converge
 #although errors still remain to be dealt with later-
