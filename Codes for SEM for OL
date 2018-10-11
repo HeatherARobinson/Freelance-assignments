@@ -31,6 +31,9 @@ Tofu$week <- Tofu$week/100
 #So far seasonal looks good. All but week are over 0.9 for Std.all- standardised . Week is less relevant in predicting season.
 
 tofu.model<-'Seasonal =~major_holiday + other_holidays + week + season
+week~~season
+major_holiday ~~ other_holidays'
+
 Selling_area =~ Canada + SE + NE
 Seasonal ~~ 0*Selling_area
 Product_establishment =~ Temporary + a*New
@@ -49,6 +52,12 @@ anova(tofu.model1,tofu.model2)- confirm any additions with ANOVA.
 
 tofu.fit<-cfa(model=tofu.model, data=Tofu)
 summary(tofu.fit, standardized=TRUE, fit.measures=TRUE)
+
+#POSSIBLE ERRORS- "not positive definite"- the wrong classes have been specified. 2 may need to be merged 
+#
+
+
+
 modificationindices(tofu.fit, sort = TRUE)
 #also include Waterpack
 
