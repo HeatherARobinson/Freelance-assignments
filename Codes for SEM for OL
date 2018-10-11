@@ -7,7 +7,7 @@ attach(Tofu)
 #To combine the 2 tofu datasets we have made some assumptions
 #This is because Lavaan deletes an entire row if there is any missing data
 #Texture and size are not given for flavored tofu so we have assumed a median texture (4) and size (2)
-#There is no idencation of pack type for flavored tofu so I have assumed it is waterpacked
+#There is no idencation of pack type for flavored tofu so I have omitted waterpack as a variable
 #We assume none of the flavored tofu is produced offsite
 #Flavor now has 13 levels, 13 being plain
 
@@ -17,7 +17,8 @@ library(lavaan)
 #The variances across the variables need to be similar. We can scale them if they are not:
 Tofu$season <- Tofu$season/10
 Tofu$Texture <- Tofu$Texture/10
-Tofu$Flavor <- Tofu$Flavor/10
+Tofu$Flavor <- as.character(Tofu$Flavor)
+#/10
 Tofu$week <- Tofu$week/100
 
 
@@ -35,29 +36,53 @@ tofu.model.a<-
 
 Sales_area =~ Canada + SE + NE
 
-Customer_preference =~ Texture + Size + Promotion + Waterpack
+Customer_preference =~ Texture + Size + Promotion + Flavor + Waterpack
 
 Product_establishment =~ Temporary + New
 
 Sales_Group =~ Private_Label + Club + Retail'
 
 tofu.fit.a<-cfa(model=tofu.model.a, data=Tofu)
-summary(tofu.fit.a, standardized=TRUE, fit.measures=TRUE)
 
 #This first model won't converge because at least 2 latent variables overlap and need combining. 
+#There are two few degrees of freedom to have latent constucts consisting of fewer than 3 variables
 #I have tried promotion in product_establishment, Seasonal and customer_preference.
 #Based on optimising one factor models for each factor using modificationindices()I have also added in observed correlations that are important to fit.
+#Based on a 1 factor model of season I have dropped week
+#I have edited the groupings until they converge
+#Size is now with Sales group in a variable called Presentation- because large sizes were only for retail and this corrected an overlap
+#of what was being measured in Customer preference and Sales group.
+#Shipping variables are now grouped with Sales area due to the correlations between Friday shipping and other site manufacture and distribution area
 
-tofu.model.b<-
-'Seasonal =~major_holiday + other_holidays + week + season
-week~~season
-Sales_area =~ Canada + SE + NE
-Customer_preference =~ Texture + Size + Promotion + Waterpack
-Waterpack ~~ 0.0903976*Waterpack
-Customer_preference =~ Canada
-Customer_preference =~ SE'
 
-Product_establishment =~ Temporary + New + Private_Label + Club + Retail'
+tofu.model.b<-'Seasonal =~major_holiday + other_holidays + season
+Customer_preference =~ Texture + Flavor 
+Presentation =~Private_Label + Club + Retail + Size
+Distribution =~Canada + SE + NE + Friday_Shipping + Other_Site'
+tofu.fit.b<-cfa(model=tofu.model.b, data=Tofu)
+summary(tofu.fit.b, standardized=TRUE, fit.measures=TRUE)
+
+#A solution has still "not been found" but the model is at least converging
+#The summary shows negative variance from private label so this needs adjusting
+var(Tofu$Private_Label)
+
+tofu.model.c<-'Seasonal =~major_holiday + other_holidays + season
+#Sales_group =~Private_Label + Club + Retail
+Tofu_desc=~Texture + a*Flavor + a*Size
+#Private_Label~~0.07737609*Private_Label
+Distribution =~Canada + a*SE + a*NE + a*Friday_Shipping + a*Other_Site'
+
+#Retail~~0.07737609*Retail
+#Other_Site~~0.2114272*Other_Site
+tofu.fit.c<-cfa(model=tofu.model.c, data=Tofu)
+summary(tofu.fit.c, standardized=TRUE, fit.measures=TRUE)
+
+
+
+SE ~~ 0.2498286*SE'
+tofu.fit.b<-cfa(model=tofu.model.b, data=Tofu)
+summary(tofu.fit.b, standardized=TRUE, fit.measures=TRUE)
+PROMOTION
 
 tofu.fit.b<-cfa(model=tofu.model.b, data=Tofu)
 summary(tofu.fit.b, standardized=TRUE, fit.measures=TRUE)
@@ -113,11 +138,7 @@ summary(tofu.fit, standardized=TRUE, fit.measures=TRUE)
 
 
 modificationindices(tofu.fit, sort = TRUE)
-#also include Waterpack
 
-#Shipping =~Friday_Shipping + a*Other_Site
-           
-#Sales_group =~Private_Label + a*Club + a*Retail
 
 
 #The model can either be scaled by setting the variance of the latent variable to 1, and dividing this between the manifest variables
