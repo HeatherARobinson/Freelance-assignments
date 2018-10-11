@@ -53,7 +53,7 @@ anova(tofu.model1,tofu.model2)- confirm any additions with ANOVA.
 tofu.fit<-cfa(model=tofu.model, data=Tofu)
 summary(tofu.fit, standardized=TRUE, fit.measures=TRUE)
 
-#POSSIBLE ERRORS- "not positive definite"- the wrong classes have been specified. 2 may need to be merged 
+#POSSIBLE ERRORS- "not positive definite"- the wrong classes have been specified. 2 may need to be merged. 1 variable may be a combination of others.
 #
 
 
