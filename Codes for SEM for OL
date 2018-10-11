@@ -18,7 +18,6 @@ library(lavaan)
 Tofu$season <- Tofu$season/10
 Tofu$Texture <- Tofu$Texture/10
 Tofu$Flavor <- as.character(Tofu$Flavor)
-#/10
 Tofu$week <- Tofu$week/100
 
 
@@ -67,33 +66,40 @@ summary(tofu.fit.b, standardized=TRUE, fit.measures=TRUE)
 var(Tofu$Private_Label)
 
 tofu.model.c<-'Seasonal =~major_holiday + other_holidays + season
-#Sales_group =~Private_Label + Club + Retail
-Tofu_desc=~Texture + a*Flavor + a*Size
-#Private_Label~~0.07737609*Private_Label
+Sales_group =~Private_Label + a*Club + a*Retail
+Customer_preference=~Texture + a*Flavor + a*Size + a*Promotion
+Private_Label~~0.07737609*Private_Label
 Distribution =~Canada + a*SE + a*NE + a*Friday_Shipping + a*Other_Site'
 
-#Retail~~0.07737609*Retail
-#Other_Site~~0.2114272*Other_Site
 tofu.fit.c<-cfa(model=tofu.model.c, data=Tofu)
 summary(tofu.fit.c, standardized=TRUE, fit.measures=TRUE)
 
+modificationindices(tofu.fit.c, sort = TRUE)
+
+tofu.model.d<-'Seasonal =~major_holiday + a*other_holidays + a*season
+Sales_group =~Private_Label + a*Club + a*Retail
+Customer_preference=~Texture + a*Flavor + a*Size + a*Promotion
+Private_Label~~0.07737609*Private_Label
+Distribution =~Canada + a*SE + a*NE + a*Friday_Shipping + a*Other_Site
+Club ~~ NE
+SE ~~ Other_Site'
+
+tofu.fit.d<-cfa(model=tofu.model.d, data=Tofu)
+summary(tofu.fit.d, standardized=TRUE, fit.measures=TRUE)
 
 
-SE ~~ 0.2498286*SE'
-tofu.fit.b<-cfa(model=tofu.model.b, data=Tofu)
-summary(tofu.fit.b, standardized=TRUE, fit.measures=TRUE)
-PROMOTION
-
-tofu.fit.b<-cfa(model=tofu.model.b, data=Tofu)
-summary(tofu.fit.b, standardized=TRUE, fit.measures=TRUE)
-
-#Combining some groups e.g. sales area and Customer preference  is essential to making the model converge
-#although errors still remain to be dealt with later-
-#this is because there is little overlap in the products sold across the different regions. 
-#Region of sale therefore predicts the product characteristics.
-#This could be dropped altogether from the model which we can test later.
 
 
+
+
+Private_Label~~0.07737609*Private_Label
+SE~~0.2498286*SE
+season ~~0.01264615*season
+Retail~~0.07737609*Retail
+major_holiday~~0.1116005*major_holiday'
+
+tofu.fit.d<-cfa(model=tofu.model.d, data=Tofu)
+summary(tofu.fit.d, standardized=TRUE, fit.measures=TRUE)
 
 
 
@@ -137,7 +143,7 @@ summary(tofu.fit, standardized=TRUE, fit.measures=TRUE)
 #e.g. other_holidays~~0.165*other_holidays
 
 
-modificationindices(tofu.fit, sort = TRUE)
+
 
 
 
