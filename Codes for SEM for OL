@@ -22,7 +22,9 @@ Waterpack<-as.factor(Waterpack)
 #This is because Lavaan deletes an entire row if there is any missing data
 #For texture, this is not given for flavored tofu so we have assumed a median texture (4)
 #There is no idencation of pack type for flavored tofu so I have assumed it is waterpacked
-#We assume none of the flavored todu is produced offsite
+#We assume none of the flavored tofu is produced offsite
+#Flavor now has 13 levels, 13 being plain
+
 
 library(lavaan)
 Tofu$Week <- Tofu$Week/100 
