@@ -3,7 +3,8 @@
 
 Tofu<-read.csv("Tofu.csv")
 New<-as.factor(New)
-Temp<-as.factor(Temp)
+Flavor<-as.factor(Flavor)
+Temporary<-as.factor(Temporary)
 SE<-as.factor(SE)
 NE<-as.factor(NE)
 Canada<-as.factor(Canada)
@@ -12,15 +13,22 @@ Retail<-as.factor(Retail)
 Club<-as.factor(Club)
 Private_label<-as.factor(Private_label)
 Friday_ship<-as.factor(Friday_ship)
-Major_holiday<-as.factor(Major_holiday)
-Other_holiday<-as.factor(Other_holiday)
+Other_Site<-as.factor(Other_Site)
+major_holiday<-as.factor(major_holiday)
+other_holiday<-as.factor(other_holidays)
 Waterpack<-as.factor(Waterpack)
+
+#To combine the 2 tofu datasets we have made some assumptions
+#This is because Lavaan deletes an entire row if there is any missing data
+#For texture, this is not given for flavored tofu so we have assumed a median texture (4)
+#There is no idencation of pack type for flavored tofu so I have assumed it is waterpacked
+#We assume none of the flavored todu is produced offsite
 
 library(lavaan)
 Tofu$Week <- Tofu$Week/100 
 Tofu$Texture <- Tofu$Texture/10 
-Tofu$Temp <- Tofu$Temp*10
-Tofu$Season <- Tofu$Season/10 
+Tofu$Temporary<- Tofu$Temporary*10
+Tofu$season <- Tofu$season/10 
 #Each model should contain at least 3 variables so that the latent variable can be estimated
 #because the degrees of freedom are based on the variables, not on sample size.
 #Do not construct a model that has 0 degrees of freedom
@@ -28,11 +36,11 @@ Tofu$Season <- Tofu$Season/10
 #Define the model:
 # example: model<-'latent_variable =~manifest_variable1 + manifest_variable2 + manifest_variable3'
 
-tofu.model<-'Sales_group =~Private_label + a*Club + a*Retail + a*Food_service
-            Seasonal =~Major_holiday + Other_holiday + Week + Season'
+tofu.model<-'Sales_group =~Private_Label + a*Club + a*Retail + a*Food_service
+            Seasonal =~major_holiday + other_holidays + week + season'
             
-            Shipping =~Friday_ship + Other_site
-            Customer_preference =~ Texture + Size
+            Shipping =~Friday_Shipping + Other_Site
+            Customer_preference =~ Texture + Size + Promotion
             Selling_area =~ Canada + a*SE + a*NE
             Product_establishment =~ Temp + New'
 
