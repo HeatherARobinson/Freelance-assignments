@@ -30,15 +30,57 @@ Tofu$week <- Tofu$week/100
 
 #So far seasonal looks good. All but week are over 0.9 for Std.all- standardised . Week is less relevant in predicting season.
 
-tofu.model<-'Seasonal =~major_holiday + other_holidays + week + season
-week~~season
-major_holiday ~~ other_holidays
-Selling_area =~ Canada + SE + NE
-Product_establishment =~ Temporary + a*New
-Customer_preference =~ Texture + a*Size + a*Promotion
-Sales_group =~ Private_Label + Club + Retail
+tofu.model.a<-
+'Seasonal =~major_holiday + other_holidays + week + season
+
+Sales_area =~ Canada + SE + NE
+
+Customer_preference =~ Texture + Size + Promotion + Waterpack
+
+Product_establishment =~ Temporary + New
+
+Sales_Group =~ Private_Label + Club + Retail'
+
+tofu.fit.a<-cfa(model=tofu.model.a, data=Tofu)
+summary(tofu.fit.a, standardized=TRUE, fit.measures=TRUE)
+
+#This first model won't converge because at least 2 latent variables overlap and need combining. 
+#I have tried promotion in product_establishment, Seasonal and customer_preference.
+
+tofu.model.b<-
+'Seasonal =~major_holiday + other_holidays + week + season
+
+Customer_preference =~ Texture + Size + Promotion + Waterpack +  Canada + SE + NE
+
+Product_establishment =~ Temporary + New
+
+Sales_Group =~ Private_Label + Club + Retail'
+
+tofu.fit.b<-cfa(model=tofu.model.b, data=Tofu)
+summary(tofu.fit.b, standardized=TRUE, fit.measures=TRUE)
+
+
+#Combining the groups for sales area and Customer preference  is essential to making the model converge
+#although errors still remain to be dealt with later-
+#this is because there is little overlap in the products sold across the different regions. 
+#Region of sale therefore predicts the product characteristics.
+#This could be dropped altogether from the model which we can test later.
+
+
+
+
+Waterpack ~~ 0.0903976*Waterpack
 week~~0.01998828*week
-SE~~0.2498286*SE'
+SE~~0.2498286*SE
+season~~ 0.01264615*season
+
+
+tofu.fit.a<-cfa(model=tofu.model.a, data=Tofu)
+summary(tofu.fit.a, standardized=TRUE, fit.measures=TRUE)
+
+
+
+
 
 
 
@@ -59,7 +101,7 @@ tofu.fit<-cfa(model=tofu.model, data=Tofu)
 summary(tofu.fit, standardized=TRUE, fit.measures=TRUE)
 
 #POSSIBLE ERRORS- "not positive definite"- the wrong classes have been specified. 2 may need to be merged. 1 variable may be a combination of others.
-#
+#Sales group resamples another latent class so needs to be merged. Won't merge with area
 
 #If you have negative variances in std.all, set the variances manually in the model.
 #e.g. other_holidays~~0.165*other_holidays
