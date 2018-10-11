@@ -41,17 +41,16 @@ tofu.fit<-cfa(model=tofu.model, data=Tofu)
 summary(tofu.fit, standardized=TRUE, fit.measures=TRUE)
 
 #also include Waterpack
-'
-#Shipping =~Friday_Shipping + Other_Site
+
+#Shipping =~Friday_Shipping + a*Other_Site
            
 #Sales_group =~Private_Label + a*Club + a*Retail
+
 
 #The model can either be scaled by setting the variance of the latent variable to 1, and dividing this between the manifest variables
 #OR we can set the variance of one of the manifest variables to 1 (more commonly used approach). This is the Lavaan default.
 
 #Now fit the model (run a factor analysis to check how well the manifest variables explain the latent variable):
-tofu.fit<-cfa(model=tofu.model, data=Tofu)
-summary(tofu.fit, standardized=TRUE, fit.measures=TRUE)
 
 #Interpreting: Different manifest variables have different loadings on the latent variables.
 #Std.all in the output shows these loadings. Close to 1 shows a strong relationship to the latent variable.
