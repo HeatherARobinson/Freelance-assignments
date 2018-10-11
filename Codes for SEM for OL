@@ -32,13 +32,18 @@ Tofu$week <- Tofu$week/100
 
 tofu.model<-'Seasonal =~major_holiday + other_holidays + week + season
 week~~season
-major_holiday ~~ other_holidays'
-
+major_holiday ~~ other_holidays
 Selling_area =~ Canada + SE + NE
-Seasonal ~~ 0*Selling_area
 Product_establishment =~ Temporary + a*New
-Seasonal ~~ 0*Product_establishment
 Customer_preference =~ Texture + a*Size + a*Promotion
+Sales_group =~ Private_Label + Club + Retail
+week~~0.01998828*week
+SE~~0.2498286*SE'
+
+
+
+other_holidays~~0.165*other_holidays
+
 NE ~~ New
 SE ~~ New
 NE ~~ Temporary
@@ -56,6 +61,8 @@ summary(tofu.fit, standardized=TRUE, fit.measures=TRUE)
 #POSSIBLE ERRORS- "not positive definite"- the wrong classes have been specified. 2 may need to be merged. 1 variable may be a combination of others.
 #
 
+#If you have negative variances in std.all, set the variances manually in the model.
+#e.g. other_holidays~~0.165*other_holidays
 
 
 modificationindices(tofu.fit, sort = TRUE)
