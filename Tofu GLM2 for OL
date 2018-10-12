@@ -62,3 +62,12 @@ anova(GLM9,GLM10,test="Chisq")
 summary(GLM10)
 GLM11 <- update(GLM10, .~.-other_holidays:season)
 anova(GLM10,GLM11,test="Chisq")
+
+summary(GLM11)
+GLM12 <- update(GLM11, .~.-Retail)
+anova(GLM11,GLM12,test="Chisq")
+
+#The following are significant: SE, NE, Canada, size, promotion, major holiday, other holidays, season, temporary, new, texture, flavor, Friday shipping, other manufacturing site.
+#It is therefore good that we include these in the SEM.
+#The variables that were most problematic to fit in the SEM (private label, club, retail and promotion) fell out of the GLM as not being significant to sales.
+#There are significant interactions between SE and Canada, major holiday and other holidays, and major holiday and season.
