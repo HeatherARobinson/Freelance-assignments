@@ -22,7 +22,7 @@ Tofu$SE<-as.factor(Tofu$SE)
 Tofu$Temporary<-as.factor(Tofu$Temporary)
 Tofu$New<-as.factor(Tofu$New)
 
-GLM1<-glm(sales~SE+NE+Canada+Promotion+Retail+Size+major_holiday+other_holidays+season+Temporary+New+Texture+Flavor+Club+Private_Label+Other_Site, family="poisson")
+GLM1<-glm(sales~SE+NE+Canada+Promotion+Retail+Size+major_holiday+other_holidays+season+Temporary+New+Texture+Flavor+Club+Friday_Shipping+Private_Label+Other_Site, family="poisson")
 
 #We tell R we are using a Poisson distribution
 
