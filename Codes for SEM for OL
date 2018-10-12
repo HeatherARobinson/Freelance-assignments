@@ -44,7 +44,7 @@ tofu.fit.a<-cfa(model=tofu.model.a, data=Tofu)
 
 #This first model won't converge because at least 2 latent variables overlap and need combining (matrix is not positive-definite)
 #There are two few degrees of freedom to have latent constucts consisting of fewer than 3 variables-
-#Size is now with Sales group in a variable called Presentation- because large sizes were only for retail and this corrected an overlap
+#Combine size with Sales group in a variable called Presentation- because large sizes were only for retail and this corrected an overlap
 #of what was being measured in Customer preference and Sales group.
 #Shipping variables are now grouped with Sales area due to the correlations between Friday shipping and other site manufacture and distribution area
 #Based on a 1 factor model of season I have dropped week as there is too much overlap with the other variables
@@ -63,29 +63,86 @@ tofu.fit.b<-cfa(model=tofu.model.b, data=Tofu)
 summary(tofu.fit.b, standardized=TRUE, fit.measures=TRUE)
 
 #A solution has still "not been found" 
-#The summary shows negative variance from private label so this needs adjusting
-var(Tofu$Private_Label)
 
-tofu.model.c<-'Seasonal =~major_holiday + other_holidays + season
+
+tofu.model.c<-'Seasonal =~major_holiday + a*other_holidays + a*season
+
 Customer_preference=~Texture + a*Flavor + a*Size
-Distribution =~Canada + SE + NE + Friday_Shipping +Other_Site'
+
+Product_establishment=~New +a*Promotion + a*Temporary
+
+Distribution =~Canada + a*SE + a*NE + a*Friday_Shipping +a*Other_Site'
 
 tofu.fit.c<-cfa(model=tofu.model.c, data=Tofu)
 summary(tofu.fit.c, standardized=TRUE, fit.measures=TRUE)
 
 #The model will converge without having sales group and size in the same model
 #But not with both as size closely reflects retail, club and private label.
-#Try one model with size included (c) and one with sales group (d) and compare fits
+#Try including retail with size etc
 #Combine sales group with customer preference to allow sufficient dfs
 
 tofu.model.d<-'Seasonal =~major_holiday + other_holidays + season
-Customer_preference=~Texture + a*Flavor + a*Size + a*Retail 
+Customer_preference=~Texture + a*Flavor + a*Size + a*Retail + a*Private_Label + a*Club
+Product_establishment=~New +a*Promotion + a*Temporary
 Distribution =~Canada + SE + NE + Friday_Shipping +Other_Site'
  
-tofu.fit.d<-cfa(model=tofu.model.d, data=Tofu)
-summary(tofu.fit.d, standardized=TRUE, fit.measures=TRUE)
+tofu.fit.d<-cfa(model=tofu.model.d, data=Tofu
+#This causes issues with matrix not being positive-definitive: Retail, private and/or club are resampling some other variable.
 
-#Private label and club cannot be included with the other variables as they have so little variation
+tofu.model.e<-'Seasonal =~major_holiday + a*other_holidays + a*season
+Customer_preference=~Texture + a*Flavor  + a*Size
+Product_establishment=~New +a*Promotion + a*Temporary
+Area =~Canada + a*SE + a*NE
+Distribution=~a*Friday_Shipping +a*Other_Site+ a*Retail+a*Private_Label'
+tofu.fit.e<-cfa(model=tofu.model.e, data=Tofu)
+
+#Still not converging- try dropping Club, which is not very informative
+#Distribution is better fitted if separated out again
+#I have confirmed the following fit well as one factor models before combining but there are still issues:
+#friday shipping is removed as it only applies to SE
+
+tofu.model.f<-'Seasonal =~major_holiday + other_holidays + season
+Customer_preference=~Texture+Flavor
+Product_presentation=~Size +Retail+Promotion + Temporary + New
+Distribution =~Canada + a*SE + a*NE
+Texture~~0.0207125*Texture'
+
+tofu.fit.f<-cfa(model=tofu.model.f, data=Tofu)
+
+modificationindices(tofu.fit.f, sort = TRUE)
+
+
+
+#Compare the two fitted values
+fitmeasures(tofu.fit.c,c("aic","ecvi"))
+fitmeasures(tofu.fit.d,c("aic","ecvi"))
+#c has a lower AIC so retail should not go in customer preference in this way.
+
+#Try adding sales group constructs to distribution
+
+tofu.model.e<-'Seasonal =~major_holiday + other_holidays + season
+Customer_preference=~Texture + a*Flavor + a*Size
+Product_establishment=~New +a*Promotion + a*Temporary
+Distribution =~Canada + SE + NE + Friday_Shipping +Other_Site + Retail+Club+Private_Label'
+
+tofu.fit.e<-cfa(model=tofu.model.e, data=Tofu)
+summary(tofu.fit.e, standardized=TRUE, fit.measures=TRUE)
+
+#Does not converge
+#Private label and club cannot be included with the other variables as they have so little variation.
+
+#Try replacing size with Retail and comparing back to model C
+
+
+tofu.model.f<-'Seasonal =~major_holiday + other_holidays + season
+Customer_preference=~Texture + a*Flavor + a*Retail
+Product_establishment=~New +a*Promotion + s*Temporary
+Distribution =~Canada + SE + NE + Friday_Shipping +Other_Site'
+
+tofu.fit.f<-cfa(model=tofu.model.c, data=Tofu)
+summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
+
+
 
 modificationindices(tofu.fit.d, sort = TRUE)
 
