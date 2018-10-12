@@ -167,9 +167,6 @@ anova(tofu.model1,tofu.model2)- #You can use this code to compare any 2 model fi
 #Std.all in the output shows these loadings. Close to 1 shows a strong relationship to the latent variable.
 #0.3 is typically considered an acceptable loading.
 #CFI and TLI should be between 0.9 and 1 to show that the model fits the data
-#Ours are over 0.7 which show the model is OK but not a great fit.
-
-#VISUALISATION
-library(semPlot)
+#Ours are over 0.7 which show the model is a good fit but not a great fit.
 
 
