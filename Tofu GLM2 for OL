@@ -38,4 +38,17 @@ GLM4 <- update(GLM3, .~.-Promotion)
 anova(GLM3,GLM4)
 summary(GLM4)
 
-#Final model reached
+#Try adding in interactions if the model will converge
+GLM5<-glm(sales~SE*NE*Canada+Retail*Size+major_holiday*other_holidays*season+Temporary+New+Texture+Flavor+Friday_Shipping+Other_Site, data=Tofu,family="poisson")
+summary(GLM5)
+GLM6 <- update(GLM5, .~.-SE:NE:Canada)
+anova(GLM5,GLM6)
+
+summary(GLM6)
+GLM7 <- update(GLM6, .~.-major_holiday:other_holidays:season)
+anova(GLM6,GLM7)
+
+summary(GLM7)
+GLM8 <- update(GLM7, .~.-SE:NE)
+anova(GLM7,GLM8)
+
