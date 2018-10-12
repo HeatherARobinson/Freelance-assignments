@@ -19,6 +19,7 @@ Tofu$season <- Tofu$season/10
 Tofu$Texture <- Tofu$Texture/10
 Tofu$Flavor <- as.character(Tofu$Flavor)
 Tofu$week <- Tofu$week/100
+Tofu$Size<-Tofu$Size/10
 
 #Each latent construct should contain at least 3 variables so that the latent variable can be estimated
 #because the degrees of freedom are based on the variables, not on sample size.
@@ -133,18 +134,18 @@ summary(tofu.fit.e, standardized=TRUE, fit.measures=TRUE)
 
 #Try replacing size with Retail and comparing back to model C
 
-
 tofu.model.f<-'Seasonal =~major_holiday + other_holidays + season
-Customer_preference=~Texture + a*Flavor + a*Retail
-Product_establishment=~New +a*Promotion + s*Temporary
-Distribution =~Canada + SE + NE + Friday_Shipping +Other_Site'
+Product_presentation=~Size +Retail+Promotion + Temporary + New+ Texture+Flavor
+Distribution =~Canada + a*SE + a*NE
+Texture~~0.0207125*Texture
+Flavor~~Temporary
+Flavor~~SE'
 
-tofu.fit.f<-cfa(model=tofu.model.c, data=Tofu)
+tofu.fit.f<-cfa(model=tofu.model.f, data=Tofu)
 summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
 
 
-
-modificationindices(tofu.fit.d, sort = TRUE)
+modificationindices(tofu.fit.f, sort = TRUE)
 
 #Logical recommended correlations will now be added
 
