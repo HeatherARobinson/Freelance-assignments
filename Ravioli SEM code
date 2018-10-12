@@ -1,0 +1,57 @@
+#Creating an SEM to describe the relationship between manifest variables and latent umbrella constructs
+#Using the Lavaan package
+
+Ravioli<-read.csv("Ravioli.csv")
+attach(Ravioli)
+
+library(lavaan)
+
+#The variances across the variables need to be similar. We can scale them if they are not:
+varTable(Ravioli)
+Ravioli$week_year <- Ravioli$week_year/100
+
+#Each latent construct should contain at least 3 variables so that the latent variable can be estimated
+
+#because the degrees of freedom are based on the variables, not on sample size.
+
+#Do not construct a model that has 0 degrees of freedom
+
+
+#Define the model:
+
+# example: model<-'latent_variable =~manifest_variable1 + manifest_variable2 + manifest_variable3'
+
+Rav.model<-'Seasonal =~major_holiday + other_holidays + week_year + week_month + season'
+Rav.fit<-cfa(Rav.model,data=Ravioli)
+summary(Rav.fit,standardize=TRUE,fit.measures=TRUE)
+
+#So far seasonal looks good. All but week are over 0.9 for Std.all- standardised . Week is less relevant in predicting season.
+
+Rav.model.a<-'Seasonal =~major_holiday + other_holidays + week_year + week_month + season
+Sales_area =~ Canada + SE + BA+MX+MW+NW
+Product_presentation =~ promotion + Flavour + New + Temporary
+Distribution =~ Private_Label + Club + Retail + Friday_Shipping'
+Rav.fit.a<-cfa(model=Rav.model.a, data=Ravioli)
+
+#The covariance matrix is not positive definitive- one of the latent variables explains another, these should be combined
+#Try combining distribution and sales area
+
+Rav.model.b<-'Seasonal =~major_holiday + other_holidays + week_year + week_month + season
+Sales_area =~ Canada + SE + BA+MX+MW+NW+Private_Label + Club + Retail + Friday_Shipping
+Product_presentation =~ promotion + Flavour + New + Temporary'
+Rav.fit.b<-cfa(model=Rav.model.b, data=Ravioli)
+
+#This did not help- go back to a and combine product presentation with sales area
+
+Rav.model.c<-'Seasonal =~major_holiday + other_holidays + week_year + week_month + season
+Sales_area =~ Canada + SE + BA+MX+MW+NW +promotion + Flavour + New + Temporary
+Distribution =~ Private_Label + Club + Retail + Friday_Shipping'
+Rav.fit.c<-cfa(model=Rav.model.c, data=Ravioli)
+#Also not beneficial
+
+Rav.model.d<-'Seasonal =~major_holiday + other_holidays + week_year + week_month + season
+Sales_area =~ Canada + SE + BA+MX+MW+NW
+Product_presentation =~ promotion + Flavour + New + Temporary +Private_Label + Club + Retail + Friday_Shipping'
+Rav.fit.d<-cfa(model=Rav.model.d, data=Ravioli)
+
+#One category still doesn't work when combined with another, so try rearranging groupings altogether
