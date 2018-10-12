@@ -22,14 +22,20 @@ Tofu$SE<-as.factor(Tofu$SE)
 Tofu$Temporary<-as.factor(Tofu$Temporary)
 Tofu$New<-as.factor(Tofu$New)
 
-GLM1<-glm(sales~SE+NE+Canada+Promotion+Retail+Size+major_holiday+other_holidays+season+Temporary+New+Texture+Flavor+Club+Friday_Shipping+Private_Label+Other_Site, family="poisson")
+GLM1<-glm(sales~SE+NE+Canada+Promotion+Retail+Size+major_holiday+other_holidays+season+Temporary+New+Texture+Flavor+Club+Friday_Shipping+Private_Label+Other_Site, data=Tofu,family="poisson")
 
-#We tell R we are using a Poisson distribution
+#We tell R we are using a Poisson distribution so that it knows sales is a count variable
 
-Seasonal =~major_holiday + other_holidays + season
-Product_presentation=~Size +Retail+Promotion + Temporary + New+ Texture+Flavor
-Distribution =~Canada + a*SE + a*NE
-Texture~~0.0207125*Texture
-Flavor~~Temporary
-Flavor~~SE
-sales~Seasonal+Product_presentation+Distribution'
+summary(GLM1)
+#We sequentially drop non significant variables (P value over 0.05) with the highest P values then reevaluate the model until only significant variables remain.
+GLM2 <- update(GLM1, .~.-Club)
+anova(GLM1,GLM2) #If the P value for an ANOVA is <0.05, we would retain the variable
+summary(GLM2)
+GLM3 <- update(GLM2, .~.-Private_Label)
+anova(GLM2,GLM3)
+summary(GLM3)
+GLM4 <- update(GLM3, .~.-Promotion)
+anova(GLM3,GLM4)
+summary(GLM4)
+
+#Final model reached
