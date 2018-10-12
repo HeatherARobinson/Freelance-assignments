@@ -1,0 +1,27 @@
+library(lavaan)
+
+semPaths(fit, title = FALSE, curvePivot = TRUE)
+
+Tofu<-read.csv("Tofu2.csv")
+attach(Tofu)
+
+Tofu$season <- Tofu$season/10
+Tofu$Texture <- Tofu$Texture/10
+Tofu$Flavor <- as.character(Tofu$Flavor)
+Tofu$week <- Tofu$week/100
+Tofu$Size<-Tofu$Size/10
+Tofu$sales<-as.numeric(Tofu$sales)
+
+tofu.model.f<-'Seasonal =~major_holiday + other_holidays + season
+Product_presentation=~Size +Retail+Promotion + Temporary + New+ Texture+Flavor
+Distribution =~Canada + a*SE + a*NE
+Texture~~0.0207125*Texture
+Flavor~~Temporary
+Flavor~~SE
+
+sales~Seasonal+Product_presentation+Distribution'
+tofu.fit.f<-cfa(model=tofu.model.f, data=Tofu)
+summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
+
+semPaths(tofu.fit.f, title = FALSE, color = list(lat = rgb(245, 253, 118, maxColorValue = 255), 
+    man = rgb(155, 253, 175, maxColorValue = 255)),curvePivot = TRUE)
