@@ -1,0 +1,30 @@
+#Creating an GLM to test for associations between individual variables and sales and significant interactions
+#No additional package installs needed
+
+Tofu<-read.csv("Tofu2.csv")
+attach(Tofu)
+Tofu$sales<-as.numeric(Tofu$sales)
+Tofu<-Tofu[!is.na(Tofu$sales),] #Make sure each row in the dataset has a sales value
+
+Tofu$major_holiday<-as.factor(Tofu$major_holiday)
+Tofu$other_holidays<-as.factor(Tofu$other_holidays)
+Tofu$Friday_Shipping<-as.factor(Tofu$Friday_Shipping)
+Tofu$Other_Site<-as.factor(Tofu$Other_Site)
+Tofu$Flavor<-as.factor(Tofu$Flavor)
+Tofu$Promotion<-as.factor(Tofu$Promotion)
+Tofu$Private_Label<-as.factor(Tofu$Private_Label)
+Tofu$Club<-as.factor(Tofu$Club)
+
+
+
+GLM1<-glm(sales~SE+NE+Canada+Promotion+Retail+Size+major_holiday+other_holidays+season+Temporary+New+Texture+Flavor+Club+Private_Label+Other_Site, family="poisson")
+
+#We tell R we are using a Pois
+
+Seasonal =~major_holiday + other_holidays + season
+Product_presentation=~Size +Retail+Promotion + Temporary + New+ Texture+Flavor
+Distribution =~Canada + a*SE + a*NE
+Texture~~0.0207125*Texture
+Flavor~~Temporary
+Flavor~~SE
+sales~Seasonal+Product_presentation+Distribution'
