@@ -20,6 +20,7 @@ Tofu$Texture <- Tofu$Texture/10
 Tofu$Flavor <- as.character(Tofu$Flavor)
 Tofu$week <- Tofu$week/100
 Tofu$Size<-Tofu$Size/10
+Tofu$sales<-as.numeric(Tofu$sales)
 
 #Each latent construct should contain at least 3 variables so that the latent variable can be estimated
 #because the degrees of freedom are based on the variables, not on sample size.
@@ -139,60 +140,34 @@ Product_presentation=~Size +Retail+Promotion + Temporary + New+ Texture+Flavor
 Distribution =~Canada + a*SE + a*NE
 Texture~~0.0207125*Texture
 Flavor~~Temporary
-Flavor~~SE'
+Flavor~~SE
+sales~Seasonal+Product_presentation+Distribution'
 
 tofu.fit.f<-cfa(model=tofu.model.f, data=Tofu)
 summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
 
-
 modificationindices(tofu.fit.f, sort = TRUE)
 
-#Logical recommended correlations will now be added
+#You can use the above to see the logical recommended correlations to add
 
-tofu.model.e<-
-
-
-
-
-
-
-
-
-
-NE ~~ New
-SE ~~ New
-NE ~~ Temporary
-SE ~~ Temporary
-Customer_preference =~ Canada
-Customer_preference =~ SE'
-
-anova(tofu.model1,tofu.model2)- confirm any additions with ANOVA.
+anova(tofu.model1,tofu.model2)- #You can use this code to compare any 2 model fits with ANOVA.
 
 #In the model code, #~ shows that a manifest variable is predicting a latent variable. ~~ shows a correlation between variables.
 
-tofu.fit<-cfa(model=tofu.model, data=Tofu)
-summary(tofu.fit, standardized=TRUE, fit.measures=TRUE)
-
 #POSSIBLE ERRORS- "not positive definite"- the wrong classes have been specified. 2 may need to be merged. 1 variable may be a combination of others.
-#Sales group resamples another latent class so needs to be merged. Won't merge with area
 
 #If you have negative variances in std.all, set the variances manually in the model.
 #e.g. other_holidays~~0.165*other_holidays
 
 
-
-
-
-
 #The model can either be scaled by setting the variance of the latent variable to 1, and dividing this between the manifest variables
 #OR we can set the variance of one of the manifest variables to 1 (more commonly used approach). This is the Lavaan default.
-
-#Now fit the model (run a factor analysis to check how well the manifest variables explain the latent variable):
 
 #Interpreting: Different manifest variables have different loadings on the latent variables.
 #Std.all in the output shows these loadings. Close to 1 shows a strong relationship to the latent variable.
 #0.3 is typically considered an acceptable loading.
 #CFI and TLI should be between 0.9 and 1 to show that the model fits the data
+#Ours are over 0.7 which show the model is OK but not a great fit.
 
 #VISUALISATION
 library(semPlot)
