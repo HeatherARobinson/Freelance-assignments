@@ -29,26 +29,36 @@ GLM1<-glm(sales~SE+NE+Canada+Promotion+Retail+Size+major_holiday+other_holidays+
 summary(GLM1)
 #We sequentially drop non significant variables (P value over 0.05) with the highest P values then reevaluate the model until only significant variables remain.
 GLM2 <- update(GLM1, .~.-Club)
-anova(GLM1,GLM2) #If the P value for an ANOVA is <0.05, we would retain the variable
+anova(GLM1,GLM2,test="Chisq") #If the P value for an ANOVA is <0.05, we would retain the variable
 summary(GLM2)
 GLM3 <- update(GLM2, .~.-Private_Label)
-anova(GLM2,GLM3)
+anova(GLM2,GLM3,test="Chisq")
 summary(GLM3)
 GLM4 <- update(GLM3, .~.-Promotion)
-anova(GLM3,GLM4)
-summary(GLM4)
+anova(GLM3,GLM4,test="Chisq") #This is marginal so keep in (between 0.05 and 0.1)
 
 #Try adding in interactions if the model will converge
-GLM5<-glm(sales~SE*NE*Canada+Retail*Size+major_holiday*other_holidays*season+Temporary+New+Texture+Flavor+Friday_Shipping+Other_Site, data=Tofu,family="poisson")
+GLM5<-glm(sales~SE*NE*Canada+Retail*Size+Promotion+major_holiday*other_holidays*season+Temporary+New+Texture+Flavor+Friday_Shipping+Other_Site, data=Tofu,family="poisson")
 summary(GLM5)
 GLM6 <- update(GLM5, .~.-SE:NE:Canada)
-anova(GLM5,GLM6)
+anova(GLM5,GLM6,test="Chisq")
 
 summary(GLM6)
 GLM7 <- update(GLM6, .~.-major_holiday:other_holidays:season)
-anova(GLM6,GLM7)
+anova(GLM6,GLM7,test="Chisq")
 
 summary(GLM7)
 GLM8 <- update(GLM7, .~.-SE:NE)
-anova(GLM7,GLM8)
+anova(GLM7,GLM8,test="Chisq")
 
+summary(GLM8)
+GLM9 <- update(GLM8, .~.-NE:Canada)
+anova(GLM8,GLM9,test="Chisq")
+
+summary(GLM9)
+GLM10 <- update(GLM9, .~.-Retail:Size)
+anova(GLM9,GLM10,test="Chisq")
+
+summary(GLM10)
+GLM11 <- update(GLM10, .~.-other_holidays:season)
+anova(GLM10,GLM11,test="Chisq")
