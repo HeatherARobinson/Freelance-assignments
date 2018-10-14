@@ -183,12 +183,45 @@ Rav.model.1<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
 Sales_group=~Retail + Club + Private_Label
 Customer_preference =~ Promo + Flavor + Region
 Product_establishment =~ Temp + New
-Sales~ Seasonal+Sales_area+Customer_preference+Product_establishment+Sales_group + Friday_Shipping'
+Sales~ Seasonal+Customer_preference+Product_establishment+Sales_group + Friday_Shipping'
 
 Rav.fit.1<-sem(model=Rav.model.1, data=Rav)
 
+Rav.model.2<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
+Sales_group=~Retail + Club + Private_Label
+Customer_preference =~ Promo + Flavor + Region+Temp + New
+Sales~ Seasonal+Customer_preference+Sales_group'
 
+Rav.fit.2<-sem(model=Rav.model.2, data=Rav)
 
+Rav.model.3<-'Seasonal =~Major_hol + Other_hol + week_year + week_month
+Sales_group=~Retail + Club + Private_Label + Region
+Customer_preference =~ Promo + Flavor + Temp + New
+Sales~ Seasonal+Customer_preference+Sales_group'
+
+Rav.fit.3<-sem(model=Rav.model.3, data=Rav)
+#No more ovrlap errors
+#But still no convergence
+
+Rav.model.4<-'Seasonal =~Major_hol + a*Other_hol + a*week_year
+Sales_group=~Retail + a*Club + a*Private_Label
+Customer_preference =~Promo + a*Temp + a*New
+Sales~ Seasonal+Customer_preference+Sales_group+Flavor+Region'
+
+Rav.fit.4<-sem(model=Rav.model.4, data=Rav)
+
+summary(Rav.fit.4, standardized=TRUE, fit.measures=TRUE)
+ 
+#This still fails to converge
+
+Rav.model.5<-'Seasonal =~Major_hol + a*Other_hol + a*week_year
+Sales_context=~Retail + a*Club + a*Private_Label+a*Promo + a*Temp + a*New
+Sales~ Seasonal+Sales_context+Flavor+Region'
+
+Rav.fit.5<-sem(model=Rav.model.5 , data=Rav)
+
+summary(Rav.fit.5, standardized=TRUE, fit.measures=TRUE)
+#Major holidays and Retail have unusually high variances
 
 
 #The model will converge without either sales group or size in the same model
