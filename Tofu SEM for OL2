@@ -43,9 +43,10 @@ scatter(dd1,scannf=TRUE,clab.row=0,clab.col=0.7)
 varTable(Tofu)
 Tofu$Season <- Tofu$Season/10
 Tofu$Texture <- Tofu$Texture/10
-Tofu$Flavor <- as.numeric(Tofu$Flavor)/10
+Tofu$Flavor <- as.numeric(Tofu$Flavor)/10o
 Tofu$Week <- Tofu$Week/100
 Tofu$Sales<-as.numeric(Tofu$Sales)/1000
+Tofu$Size<-as.numeric(Tofu$Size/10)
 
 #Each latent construct should contain at least 3 variables so that the latent variable can be estimated
 #because the degrees of freedom are based on the variables, not on sample size.
@@ -115,24 +116,31 @@ summary(tofu.fit.d, standardized=TRUE, fit.measures=TRUE)
 #I have confirmed the following fit well as one factor models before combining but there are still issues:
 #friday shipping is removed as it only applies to SE
 #Private label and club cannot be included with the other variables as they have so little variation.
-#Try replacing size with Retail and comparing back to model C
+#Try adding size back with with Retail and comparing back to model C
 
-tofu.model.f<-'Seasonal =~Major_hol + Other_hol + Season
-Type=~Size +Retail+Promo + Temp + New+ Texture+Flavor
+tofu.model.f<-'Seasonal =~Major_hol + a*Other_hol + a*Season
+Type=~Size +a*Retail+a*Promo + a*Temp + a*New+ a*Texture+a*Flavor
 Distribution =~Canada + a*SE + a*NE
-Sales~Seasonal+Type+Distribution'
+Sales~Seasonal+Type+Distribution
+Other_hol~~0.165*Other_hol'
 
 tofu.fit.f<-sem(model=tofu.model.f, data=Tofu)
 summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
 
-#The seasonal category variables are a good fit for the latent construct.
-#The other two latent constructs are less well supported
-#CFI now up to 0.4
-#Use summary to identify and deal with negative variances
+#Still not converging
 
-modificationindices(tofu.fit.h, sort = TRUE)
+#Try removing Size as this resamples Retail 
 
-tofu.model.h<-'Seasonal =~Major_hol + Other_hol + Season
+tofu.model.g<-'Seasonal =~Major_hol + a*Other_hol + a*Season
+Type=~Retail+a*Promo + a*Temp + a*New+ a*Texture+a*Flavor
+Distribution =~Canada + a*SE + a*NE
+Sales~Seasonal+Type+Distribution
+Other_hol~~0.165*Other_hol'
+
+tofu.fit.g<-sem(model=tofu.model.g, data=Tofu)
+summary(tofu.fit.g, standardized=TRUE, fit.measures=TRUE)
+
+tofu.model.h<-'Seasonal =~Major_hol + a*Other_hol + a*Season
 Type=~Size +a*Retail+a*Promo + a*Temp + a*New+ a*Texture+a*Flavor +a*Canada + a*SE + a*NE
 Sales~Seasonal+Type'
 
