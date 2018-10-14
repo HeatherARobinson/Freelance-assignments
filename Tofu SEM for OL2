@@ -1,7 +1,8 @@
-#Creating an SEM to describe the relationship between manifest variables and latent umbrella constructs
+Creating an SEM to describe the relationship between manifest variables and latent umbrella constructs
 #Using the Lavaan package
-install.packages("ade4")      # PCA computation
-install.packages("lavaan") #SEM
+#install.packages("ade4")      # PCA computation
+#install.packages("lavaan") #SEM
+
 Tofu<-read.csv("Tofu2.csv")
 attach(Tofu)
 
@@ -12,12 +13,11 @@ attach(Tofu)
 #We assume none of the flavored tofu is produced offsite
 #Flavor now has 13 levels, 13 being plain
 
-#Before running the SEM, run a preliminary PCA
+###########################################################################################################################
+#Before running the SEM, run a preliminary PCA to guide model specification
 #We are using the package ade4 because it has functionality for differentiating categorical and continuous variables.
 
 library(ade4)
-library(lavaan)
-
 Tofu.x<-Tofu[,c(3:7,9:22)]
 Tofu.x$Major_hol<-as.factor(Tofu.x$Major_hol)
 Tofu.x$Other_hol<-as.factor(Tofu.x$Other_hol)
@@ -39,14 +39,21 @@ dd1 <- dudi.mix(Tofu.x, add.square=FALSE,scannf = FALSE,nf=5)
 dd1$eig #There are 14 principal components suggested by model if we use a threshold of an Eigen value of 1, suggesting only six are grouped.
 scatter(dd1,scannf=TRUE,clab.row=0,clab.col=0.7)
 
+
+################################################################################################################################
+library(lavaan)
+Tofu<-read.csv("Tofu2.csv")
+attach(Tofu)
+
 #The variances across the variables need to be similar. We can scale them if they are not:
 varTable(Tofu)
-Tofu$Season <- Tofu$Season/10
-Tofu$Texture <- Tofu$Texture/10
-Tofu$Flavor <- as.numeric(Tofu$Flavor)/10o
-Tofu$Week <- Tofu$Week/100
 Tofu$Sales<-as.numeric(Tofu$Sales)/1000
-Tofu$Size<-as.numeric(Tofu$Size/10)
+Tofu$Week <- Tofu$Week/100
+Tofu$Texture <- Tofu$Texture/10
+Tofu$Flavor <- as.numeric(Tofu$Flavor)/10
+Tofu$Season <- as.numeric(Tofu$Season)/10
+varTable(Tofu)
+
 
 #Each latent construct should contain at least 3 variables so that the latent variable can be estimated
 #because the degrees of freedom are based on the variables, not on sample size.
@@ -110,62 +117,41 @@ tofu.fit.d<-sem(model=tofu.model.d, data=Tofu)
 
 summary(tofu.fit.d, standardized=TRUE, fit.measures=TRUE)
 
-#Also very poor fit (CFI<0.1)
+#Also very poor fit (CFI<0.1), with some positive definitive issues implying we need fewer latent constructs
 #try dropping Club, which is not very informative
-#Distribution is better fitted if separated out again
+#Distribution may be better fitted if separated out again
+
 #I have confirmed the following fit well as one factor models before combining but there are still issues:
 #friday shipping is removed as it only applies to SE
 #Private label and club cannot be included with the other variables as they have so little variation.
 #Try adding size back with with Retail and comparing back to model C
 
-tofu.model.f<-'Seasonal =~Major_hol + a*Other_hol + a*Season
-Type=~Size +a*Retail+a*Promo + a*Temp + a*New+ a*Texture+a*Flavor
-Distribution =~Canada + a*SE + a*NE
-Sales~Seasonal+Type+Distribution
-Other_hol~~0.165*Other_hol'
+tofu.model.f<-'Seasonal =~Major_hol + Other_hol + Season
+Type=~Size +Retail+Promo + Temp + New+ Texture+Flavor
+Distribution =~Canada + SE + NE
+Sales~Seasonal+Type+Distribution'
 
 tofu.fit.f<-sem(model=tofu.model.f, data=Tofu)
 summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
 
-#Still not converging
+#Now CFI is up to 0.485.
+#There is a negative variance for Flavor which needs addressing 
+#Size and retail resample each other- dropping retail improves the model:
 
-#Try removing Size as this resamples Retail 
-
-tofu.model.g<-'Seasonal =~Major_hol + a*Other_hol + a*Season
-Type=~Retail+a*Promo + a*Temp + a*New+ a*Texture+a*Flavor
-Distribution =~Canada + a*SE + a*NE
-Sales~Seasonal+Type+Distribution
-Other_hol~~0.165*Other_hol'
+tofu.model.g<-'Seasonal =~Major_hol + Other_hol + Season
+Type=~Size+Promo + Temp + New+ Texture+Flavor
+Distribution =~Canada + SE + NE
+Sales~Seasonal+Type+Distribution'
 
 tofu.fit.g<-sem(model=tofu.model.g, data=Tofu)
 summary(tofu.fit.g, standardized=TRUE, fit.measures=TRUE)
 
-tofu.model.h<-'Seasonal =~Major_hol + a*Other_hol + a*Season
-Type=~Size +a*Retail+a*Promo + a*Temp + a*New+ a*Texture+a*Flavor +a*Canada + a*SE + a*NE
-Sales~Seasonal+Type'
-
-tofu.fit.h<-sem(model=tofu.model.h, data=Tofu)
-summary(tofu.fit.h, standardized=TRUE, fit.measures=TRUE)
+modificationindices(tofu.fit.g,sort=TRUE)
 
 
-
-#Texture~~0.0207125*Texture
-
-#Texture~~0.0207125*Texture
-#Flavor~~Temp
-#Flavor~~SE
-Sales~Seasonal+Product_presentation+Distribution'
-
-
-
-
-#Compare the two fitted values
+#Compare two fitted values
 fitmeasures(tofu.fit.c,c("aic","ecvi"))
 fitmeasures(tofu.fit.d,c("aic","ecvi"))
-#c has a lower AIC so retail should not go in customer preference in this way.
-
-
-#You can use the above to see the logical recommended correlations to add
 
 anova(tofu.model1,tofu.model2)- #You can use this code to compare any 2 model fits with ANOVA.
 
