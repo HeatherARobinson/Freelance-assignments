@@ -3,55 +3,332 @@
 
 Ravioli<-read.csv("Ravioli.csv")
 attach(Ravioli)
+#install.packages("ade4")      # PCA computation
+#install.packages("lavaan") #SEM
+
+
+###########################################################################################################################
+
+#Before running the SEM, run a preliminary PCA to guide model specification
+
+#We are using the package ade4 because it has functionality for differentiating categorical and continuous variables.
+
+
+library(ade4)
+
+Rav.x<-Ravioli[,c(3:22)]
+
+Rav.x$Major_hol<-as.factor(Rav.x$Major_hol)
+
+Rav.x$Other_hol<-as.factor(Rav.x$Other_hol)
+
+Rav.x$Flavor<-as.factor(Rav.x$Flavor)
+
+Rav.x$Promo<-as.factor(Rav.x$Promo)
+
+Rav.x$Friday_Shipping<-as.factor(Rav.x$Friday_Shipping)
+
+Rav.x$Private_Label<-as.factor(Rav.x$Private_Label)
+
+Rav.x$Club<-as.factor(Rav.x$Club)
+
+Rav.x$Retail<-as.factor(Rav.x$Retail)
+
+Rav.x$New<-as.factor(Rav.x$New)
+
+Rav.x$Temp<-as.factor(Rav.x$Temp)
+
+Rav.x$MX<-as.factor(Rav.x$MX)
+
+Rav.x$Canada<-as.factor(Rav.x$Canada)
+
+Rav.x$SE<-as.factor(Rav.x$SE)
+
+Rav.x$NW<-as.factor(Rav.x$NW)
+Rav.x$BA<-as.factor(Rav.x$BA)
+
+Rav.x$MW<-as.factor(Rav.x$MW)
+
+ddr1 <- dudi.mix(Rav.x, add.square=FALSE,scannf = FALSE,nf=10)
+
+ddr1$eig #There are 21 principal components suggested by model if we use a threshold of an Eigen value of 1, suggesting only 2 are grouped.
+
+scatter(ddr1,scannf=TRUE,clab.row=0,clab.col=0.7)
+
+
+################################################################################################################################
 
 library(lavaan)
+Rav<-read.csv("Ravioli.csv")
+attach(Rav)
 
 #The variances across the variables need to be similar. We can scale them if they are not:
-varTable(Ravioli)
-Ravioli$week_year <- Ravioli$week_year/100
+
+varTable(Rav)
+Rav$Sales<-as.numeric(Rav$Sales)/1000
+Rav$week_year<- Rav$week_year/100 
+Rav$Flavor <- as.numeric(Rav$Flavor)/10
+Rav$Region <- as.numeric(Rav$Region)/10
+varTable(Rav)
 
 #Each latent construct should contain at least 3 variables so that the latent variable can be estimated
-
 #because the degrees of freedom are based on the variables, not on sample size.
-
 #Do not construct a model that has 0 degrees of freedom
 
-
 #Define the model:
-
 # example: model<-'latent_variable =~manifest_variable1 + manifest_variable2 + manifest_variable3'
 
-Rav.model<-'Seasonal =~major_holiday + other_holidays + week_year + week_month + season'
-Rav.fit<-cfa(Rav.model,data=Ravioli)
-summary(Rav.fit,standardize=TRUE,fit.measures=TRUE)
+Rav.model.a<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
+Sales_area =~ Canada + SE + NW + BA + MX + MW + Friday_Shipping
+Sales_group=~Retail + Club + Private_Label
+Customer_preference =~ Promo + Flavor
+Product_establishment =~ Temp + New
+Sales~ Seasonal+Sales_area+Customer_preference+Product_establishment+Sales_group'
 
-#So far seasonal looks good. All but week are over 0.9 for Std.all- standardised . Week is less relevant in predicting season.
+Rav.fit.a<-sem(model=Rav.model.a, data=Rav)
 
-Rav.model.a<-'Seasonal =~major_holiday + other_holidays + week_year + week_month + season
-Sales_area =~ Canada + SE + BA+MX+MW+NW
-Product_presentation =~ promotion + Flavour + New + Temporary
-Distribution =~ Private_Label + Club + Retail + Friday_Shipping'
-Rav.fit.a<-cfa(model=Rav.model.a, data=Ravioli)
+#This first model won't converge because at least 2 latent variables overlap and need combining (matrix is not positive-definite)
 
-#The covariance matrix is not positive definitive- one of the latent variables explains another, these should be combined
-#Try combining distribution and sales area
+#There are two few degrees of freedom to have latent constucts consisting of fewer than 3 variables-
 
-Rav.model.b<-'Seasonal =~major_holiday + other_holidays + week_year + week_month + season
-Sales_area =~ Canada + SE + BA+MX+MW+NW+Private_Label + Club + Retail + Friday_Shipping
-Product_presentation =~ promotion + Flavour + New + Temporary'
-Rav.fit.b<-cfa(model=Rav.model.b, data=Ravioli)
+#Combine product establishment with customer preference
 
-#This did not help- go back to a and combine product presentation with sales area
+Rav.model.b<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
+Sales_area =~ Canada + SE + NW + BA + MX + MW + Friday_Shipping 
+Sales_group=~Retail + Club + Private_Label
+Customer_preference =~ Promo + Flavor + Temp + New
+Sales~ Seasonal+Sales_area+Customer_preference+Sales_group'
 
-Rav.model.c<-'Seasonal =~major_holiday + other_holidays + week_year + week_month + season
-Sales_area =~ Canada + SE + BA+MX+MW+NW +promotion + Flavour + New + Temporary
-Distribution =~ Private_Label + Club + Retail + Friday_Shipping'
-Rav.fit.c<-cfa(model=Rav.model.c, data=Ravioli)
-#Also not beneficial
+Rav.fit.b<-sem(model=Rav.model.b, data=Rav)
 
-Rav.model.d<-'Seasonal =~major_holiday + other_holidays + week_year + week_month + season
-Sales_area =~ Canada + SE + BA+MX+MW+NW
-Product_presentation =~ promotion + Flavour + New + Temporary +Private_Label + Club + Retail + Friday_Shipping'
-Rav.fit.d<-cfa(model=Rav.model.d, data=Ravioli)
+#Some latent constructs still overlap- try merging sales group and customer preference
 
-#One category still doesn't work when combined with another, so try rearranging groupings altogether
+Rav.model.c<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
+Sales_context =~ Canada + SE + NW + BA + MX + MW + Friday_Shipping + Retail + Club + Private_Label
+Customer_preference =~ Promo + Flavor + Temp + New
+Sales~ Seasonal+Sales_context+Customer_preference'
+
+Rav.fit.c<-sem(model=Rav.model.c, data=Rav)
+
+#Still an issue with positive definite. 
+#Try instead combining seasonal with sales group
+
+Rav.model.d<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season + Retail + Club + Private_Label
+Customer_preference =~ Promo + Flavor + Temp + New
+Sales_context =~ Canada + SE + NW + BA + MX + MW + Friday_Shipping
+Sales~ Positioning+Sales_context+Customer_preference'
+
+Rav.fit.d<-sem(model=Rav.model.d, data=Rav)
+#Still overlap- try moving some variables
+
+Rav.model.e<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season + Retail + Club + Private_Label
+Product_establishment =~ Promo + Temp + New
+Sales_context =~ Canada + SE + NW + BA + MX + MW
+Sales~ Positioning+Sales_context+Product_establishment + Flavor + Friday_Shipping'
+
+Rav.fit.e<-sem(model=Rav.model.e, data=Rav)
+
+#Sales groups may overlap with areas- try moving these into sales context
+Rav.model.f<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season
+Product_establishment =~ Promo + Temp + New + Retail + Club + Private_Label
+Sales_context =~ Canada + SE + NW + BA + MX + MW
+Sales~ Positioning+Sales_context+Product_establishment + Flavor + Friday_Shipping'
+
+Rav.fit.f<-sem(model=Rav.model.f, data=Rav)
+#Collapse product establishment and sales context
+Rav.model.g<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season
+Sales_context =~ Canada + SE + NW + BA + MX + MW + Promo + Temp + New + Retail + Club + Private_Label
+Sales~ Positioning+Sales_context+Flavor + Friday_Shipping'
+
+Rav.fit.g<-sem(model=Rav.model.g, data=Rav)
+
+#Even now there is overlap. Move temporal variables in altogether
+Rav.model.h<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season  + Promo + Temp + New
+Sales_context =~ Canada + SE + NW + BA + MX + MW + Retail + Club + Private_Label
+Sales~ Positioning+Sales_context+Flavor + Friday_Shipping'
+
+Rav.fit.h<-sem(model=Rav.model.h, data=Rav)
+
+#Try testing single factor models to see if there is something that doesn't belong
+Rav.test<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season + Promo + Temp + New'
+Rav.fit.t<-cfa(model=Rav.test, data=Rav)
+summary(Rav.fit.t) #Promo, temp and new do not belong here
+Rav.test2<-'Sales_context =~ Canada + SE + NW + BA + MX + MW + Retail + Club + Private_Label'
+Rav.fit.t2<-cfa(model=Rav.test2, data=Rav)
+#There is redundancy within sales context
+
+table(Retail,Club)
+
+#Try reducing the temporal variables
+Rav.model.i<-'Positioning =~Major_hol + Other_hol + week_year + week_month
+Sales_area=~Canada + SE + NW + BA + MX + MW
+Sales_context=~ Retail + Club + Private_Label + Promo + Temp + New
+Sales~ Positioning+Sales_area + Sales_context+Flavor'
+Rav.fit.i<-sem(model=Rav.model.i, data=Rav)
+
+Rav.test3<-'Sales_context =~ Canada + SE + NW + BA + MX + MW'
+Rav.fit.t3<-cfa(model=Rav.test3, data=Rav)
+summary(Rav.fit.t3)
+#The problem is coming from area- there is so little overlap.
+
+#Recode area- now Region variable
+0:none of those specified
+1:Canada
+2:NW
+3:BA
+4.MW, NW, SE
+5:MX
+
+Rav.model.1<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
+Sales_group=~Retail + Club + Private_Label
+Customer_preference =~ Promo + Flavor + Region
+Product_establishment =~ Temp + New
+Sales~ Seasonal+Sales_area+Customer_preference+Product_establishment+Sales_group + Friday_Shipping'
+
+Rav.fit.1<-sem(model=Rav.model.1, data=Rav)
+
+
+
+
+
+#The model will converge without either sales group or size in the same model
+
+#but not with both as size closely reflects retail, club and private label.
+
+#CFI is very low- the model fits poorly
+
+#Try including retail with size etc
+
+#Combine sales group with customer preference to allow sufficient dfs
+
+
+
+tofu.model.d<-'Seasonal =~Major_hol + Other_hol + Season
+
+Customer_preference=~Texture + a*Flavor + a*Size + a*Retail + a*Private_Label + a*Club
+
+Type=~New +a*Promo + a*Temp
+
+Distribution =~Canada + SE + NE + Friday_Shipping +Other_Site
+
+Sales~ Seasonal+Customer_preference+Type+Distribution'
+
+tofu.fit.d<-sem(model=tofu.model.d, data=Tofu)
+
+
+
+summary(tofu.fit.d, standardized=TRUE, fit.measures=TRUE)
+
+
+
+#Also very poor fit (CFI<0.1), with some positive definitive issues implying we need fewer latent constructs
+
+#try dropping Club, which is not very informative
+
+#Distribution may be better fitted if separated out again
+
+
+
+#I have confirmed the following fit well as one factor models before combining but there are still issues:
+
+#friday shipping is removed as it only applies to SE
+
+#Private label and club cannot be included with the other variables as they have so little variation.
+
+#Try adding size back with with Retail and comparing back to model C
+
+
+
+tofu.model.f<-'Seasonal =~Major_hol + Other_hol + Season
+
+Type=~Size +Retail+Promo + Temp + New+ Texture+Flavor
+
+Distribution =~Canada + SE + NE
+
+Sales~Seasonal+Type+Distribution'
+
+
+
+tofu.fit.f<-sem(model=tofu.model.f, data=Tofu)
+
+summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
+
+
+
+#Now CFI is up to 0.485.
+
+#There is a negative variance for Flavor which needs addressing 
+
+#Size and retail resample each other- dropping retail improves the model:
+
+
+
+tofu.model.g<-'Seasonal =~Major_hol + Other_hol + Season
+
+Type=~Size+Promo + Temp + New+ Texture+Flavor
+
+Distribution =~Canada + SE + NE
+
+Sales~Seasonal+Type+Distribution
+
+New~~NE
+
+Canada~~Sales'
+
+
+
+tofu.fit.g<-sem(model=tofu.model.g, data=Tofu)
+
+summary(tofu.fit.g, standardized=TRUE, fit.measures=TRUE)
+
+
+
+modificationindices(tofu.fit.g,sort=TRUE)
+
+
+
+#Compare two fitted values
+
+fitmeasures(tofu.fit.c,c("aic","ecvi"))
+
+fitmeasures(tofu.fit.d,c("aic","ecvi"))
+
+
+
+anova(tofu.model1,tofu.model2)- #You can use this code to compare any 2 model fits with ANOVA.
+
+
+
+#In the model code, #~ shows that a manifest variable is predicting a latent variable. ~~ shows a correlation between variables.
+
+
+
+#POSSIBLE ERRORS- "not positive definite"- the wrong classes have been specified. 2 may need to be merged. 1 variable may be a combination of others.
+
+
+
+#If you have negative variances in std.all, set the variances manually in the model.
+
+#e.g. other_holidays~~0.165*other_holidays
+
+
+
+
+
+#The model can either be scaled by setting the variance of the latent variable to 1, and dividing this between the manifest variables
+
+#OR we can set the variance of one of the manifest variables to 1 (more commonly used approach). This is the Lavaan default.
+
+
+
+#Interpreting: Different manifest variables have different loadings on the latent variables.
+
+#Std.all in the output shows these loadings. Close to 1 shows a strong relationship to the latent variable.
+
+#0.3 is typically considered an acceptable loading.
+
+#CFI and TLI should be between 0.9 and 1 to show that the model fits the data well
+
+#Our CFI is x which show the model is a good fit as it is close to 0.9
+
+
