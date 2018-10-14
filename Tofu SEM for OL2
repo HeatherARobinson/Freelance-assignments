@@ -141,7 +141,9 @@ summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
 tofu.model.g<-'Seasonal =~Major_hol + Other_hol + Season
 Type=~Size+Promo + Temp + New+ Texture+Flavor
 Distribution =~Canada + SE + NE
-Sales~Seasonal+Type+Distribution'
+Sales~Seasonal+Type+Distribution
+New~~NE
+Canada~~Sales'
 
 tofu.fit.g<-sem(model=tofu.model.g, data=Tofu)
 summary(tofu.fit.g, standardized=TRUE, fit.measures=TRUE)
