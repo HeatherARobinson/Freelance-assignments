@@ -1,6 +1,7 @@
 #Creating an SEM to describe the relationship between manifest variables and latent umbrella constructs
 #Using the Lavaan package
-
+install.packages("ade4")      # PCA computation
+install.packages("lavaan") #SEM
 Tofu<-read.csv("Tofu2.csv")
 attach(Tofu)
 
@@ -15,13 +16,28 @@ attach(Tofu)
 #We are using the package ade4 because it has functionality for differentiating categorical and continuous variables.
 
 library(ade4)
-Tofu.x<-Tofu[,c(3:7,9:22)]
-dd1 <- dudi.mix(Tofu.x, add.square=FALSE,scannf = FALSE)
-head(dd1$tab)
-hist(dd1$tab, prob = TRUE, right = FALSE)
-
-
 library(lavaan)
+
+Tofu.x<-Tofu[,c(3:7,9:22)]
+Tofu.x$Major_hol<-as.factor(Tofu.x$Major_hol)
+Tofu.x$Other_hol<-as.factor(Tofu.x$Other_hol)
+Tofu.x$Other_Site<-as.factor(Tofu.x$Other_Site)
+Tofu.x$Flavor<-as.factor(Tofu.x$Flavor)
+Tofu.x$Promo<-as.factor(Tofu.x$Promo)
+Tofu.x$Friday_Shipping<-as.factor(Tofu.x$Friday_Shipping)
+Tofu.x$Private_Label<-as.factor(Tofu.x$Private_Label)
+Tofu.x$Club<-as.factor(Tofu.x$Club)
+Tofu.x$Retail<-as.factor(Tofu.x$Retail)
+Tofu.x$New<-as.factor(Tofu.x$New)
+Tofu.x$Temp<-as.factor(Tofu.x$Temp)
+Tofu.x$Flavor<-as.factor(Tofu.x$Flavor)
+Tofu.x$Canada<-as.factor(Tofu.x$Canada)
+Tofu.x$SE<-as.factor(Tofu.x$SE)
+Tofu.x$NE<-as.factor(Tofu.x$NE)
+
+dd1 <- dudi.mix(Tofu.x, add.square=FALSE,scannf = FALSE,nf=5)
+dd1$eig #There are 14 principal components suggested by model if we use a threshold of an Eigen value of 1, suggesting only six are grouped.
+scatter(dd1,scannf=TRUE,clab.row=0,clab.col=0.7)
 
 #The variances across the variables need to be similar. We can scale them if they are not:
 varTable(Tofu)
