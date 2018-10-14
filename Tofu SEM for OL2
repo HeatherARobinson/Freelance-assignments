@@ -133,8 +133,8 @@ summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
 modificationindices(tofu.fit.h, sort = TRUE)
 
 tofu.model.h<-'Seasonal =~Major_hol + Other_hol + Season
-Type=~Size +Retail+Promo + Temp + New+ Texture+Flavor +Canada + a*SE + a*NE
-Sales~Seasonal+Type+Distribution'
+Type=~Size +a*Retail+a*Promo + a*Temp + a*New+ a*Texture+a*Flavor +a*Canada + a*SE + a*NE
+Sales~Seasonal+Type'
 
 tofu.fit.h<-sem(model=tofu.model.h, data=Tofu)
 summary(tofu.fit.h, standardized=TRUE, fit.measures=TRUE)
