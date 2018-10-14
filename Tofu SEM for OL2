@@ -11,16 +11,25 @@ attach(Tofu)
 #We assume none of the flavored tofu is produced offsite
 #Flavor now has 13 levels, 13 being plain
 
+#Before running the SEM, run a preliminary PCA
+#We are using the package ade4 because it has functionality for differentiating categorical and continuous variables.
+
+library(ade4)
+Tofu.x<-Tofu[,c(3:7,9:22)]
+dd1 <- dudi.mix(Tofu.x, add.square=FALSE,scannf = FALSE)
+head(dd1$tab)
+hist(dd1$tab, prob = TRUE, right = FALSE)
+
 
 library(lavaan)
 
 #The variances across the variables need to be similar. We can scale them if they are not:
+varTable(Tofu)
 Tofu$Season <- Tofu$Season/10
 Tofu$Texture <- Tofu$Texture/10
-Tofu$Flavor <- as.numeric(Tofu$Flavor)/100
+Tofu$Flavor <- as.numeric(Tofu$Flavor)/10
 Tofu$Week <- Tofu$Week/100
-Tofu$Size<-Tofu$Size/10
-Tofu$Sales<-as.numeric(Tofu$Sales)/10000
+Tofu$Sales<-as.numeric(Tofu$Sales)/1000
 
 #Each latent construct should contain at least 3 variables so that the latent variable can be estimated
 #because the degrees of freedom are based on the variables, not on sample size.
@@ -33,15 +42,10 @@ Tofu$Sales<-as.numeric(Tofu$Sales)/10000
 
 tofu.model.a<-
 'Seasonal =~Major_hol + Other_hol + Week + Season
-
 Sales_area =~ Canada + SE + NE
-
 Customer_preference =~ Texture + Size + Promo + Flavor
-
 Product_establishment =~ Temp + New
-
 Sales_Group =~ Private_Label + Club + Retail
-
 Sales~ Seasonal+Sales_area+Customer_preference+Product_establishment+Sales_Group'
 
 tofu.fit.a<-sem(model=tofu.model.a, data=Tofu)
@@ -54,39 +58,28 @@ tofu.fit.a<-sem(model=tofu.model.a, data=Tofu)
 #Based on a 1 factor model of season I have dropped week as there is too much overlap with the other variables
 
 
-tofu.model.b<-'Seasonal =~Major_hol + Other_hol + S
-eason
-
+tofu.model.b<-'Seasonal =~Major_hol + Other_hol + Season
 Customer_preference =~ Texture + Flavor + Promo + Temp + New
-
 Presentation =~Private_Label + Club + Retail + Size
-
 Distribution =~Canada + SE + NE + Friday_Shipping + Other_Site
-
 Sales~ Seasonal+Customer_preference+Presentation+Distribution'
-
 
 tofu.fit.b<-sem(model=tofu.model.b, data=Tofu)
 
-#Some latent constructs still overlap
-
+#Some latent constructs still overlap- try rearranging some of the variables
 
 tofu.model.c<-'Seasonal =~Major_hol + a*Other_hol + a*Season
-
 Customer_preference=~Texture + a*Flavor + a*Size
-
 Type=~New +a*Promo + a*Temp
-
 Distribution =~Canada + a*SE + a*NE + a*Friday_Shipping +a*Other_Site
-
 Sales~ Seasonal+Customer_preference+Type+Distribution'
 
 tofu.fit.c<-sem(model=tofu.model.c, data=Tofu)
 summary(tofu.fit.c, standardized=TRUE, fit.measures=TRUE)
 
 
-#The model will converge without having sales group and size in the same model
-#But not with both as size closely reflects retail, club and private label.
+#The model will converge without either sales group or size in the same model
+#but not with both as size closely reflects retail, club and private label.
 #CFI is very low- the model fits poorly
 #Try including retail with size etc
 #Combine sales group with customer preference to allow sufficient dfs
@@ -96,25 +89,15 @@ Customer_preference=~Texture + a*Flavor + a*Size + a*Retail + a*Private_Label + 
 Type=~New +a*Promo + a*Temp
 Distribution =~Canada + SE + NE + Friday_Shipping +Other_Site
 Sales~ Seasonal+Customer_preference+Type+Distribution'
- 
 tofu.fit.d<-sem(model=tofu.model.d, data=Tofu)
 
-tofu.model.e<-'Seasonal =~Major_hol + a*Other_hol + a*Season
-Customer_preference=~Texture + a*Flavor  + a*Size
-Product_establishment=~New +a*Promo + a*Temp
-Area =~Canada + a*SE + a*NE
-Distribution=~a*Friday_Shipping +a*Other_Site+ a*Retail+a*Private_Label
-Sales~ Seasonal+Customer_preference+Product_establishment+Area+Distribution'
-tofu.fit.e<-sem(model=tofu.model.e, data=Tofu)
+summary(tofu.fit.d, standardized=TRUE, fit.measures=TRUE)
 
-summary(tofu.fit.e, standardized=TRUE, fit.measures=TRUE)
-
-#Also very poor fit
+#Also very poor fit (CFI<0.1)
 #try dropping Club, which is not very informative
 #Distribution is better fitted if separated out again
 #I have confirmed the following fit well as one factor models before combining but there are still issues:
 #friday shipping is removed as it only applies to SE
-#Does not converge
 #Private label and club cannot be included with the other variables as they have so little variation.
 #Try replacing size with Retail and comparing back to model C
 
@@ -123,7 +106,7 @@ Type=~Size +Retail+Promo + Temp + New+ Texture+Flavor
 Distribution =~Canada + a*SE + a*NE
 Sales~Seasonal+Type+Distribution'
 
-tofu.fit.f<-sem(model=tofu.model.h, data=Tofu)
+tofu.fit.f<-sem(model=tofu.model.f, data=Tofu)
 summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
 
 #The seasonal category variables are a good fit for the latent construct.
@@ -136,9 +119,10 @@ modificationindices(tofu.fit.h, sort = TRUE)
 tofu.model.h<-'Seasonal =~Major_hol + Other_hol + Season
 Type=~Size +Retail+Promo + Temp + New+ Texture+Flavor
 Distribution =~Canada + a*SE + a*NE
-Other_hol~~0.0207125*Other_hol
-Texture~~0.0207125*Texture
-Flavor~~0.001*Flavor
+#Other_hol~~0.0207125*Other_hol
+Flavor~~0.056*Flavor
+Temp~~0.043*Temp
+#Canada~~0.196*Canada
 Sales~Seasonal+Type+Distribution'
 
 tofu.fit.h<-sem(model=tofu.model.h, data=Tofu)
