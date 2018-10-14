@@ -150,7 +150,6 @@ summary(tofu.fit.g, standardized=TRUE, fit.measures=TRUE)
 
 modificationindices(tofu.fit.g,sort=TRUE)
 
-
 #Compare two fitted values
 fitmeasures(tofu.fit.c,c("aic","ecvi"))
 fitmeasures(tofu.fit.d,c("aic","ecvi"))
