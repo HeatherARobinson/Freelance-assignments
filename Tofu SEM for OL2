@@ -15,12 +15,12 @@ attach(Tofu)
 library(lavaan)
 
 #The variances across the variables need to be similar. We can scale them if they are not:
-Tofu$season <- Tofu$season/10
+Tofu$Season <- Tofu$Season/10
 Tofu$Texture <- Tofu$Texture/10
-Tofu$Flavor <- as.character(Tofu$Flavor)
-Tofu$week <- Tofu$week/100
+Tofu$Flavor <- as.numeric(Tofu$Flavor)/100
+Tofu$Week <- Tofu$Week/100
 Tofu$Size<-Tofu$Size/10
-Tofu$sales<-as.numeric(Tofu$sales)
+Tofu$Sales<-as.numeric(Tofu$Sales)/10000
 
 #Each latent construct should contain at least 3 variables so that the latent variable can be estimated
 #because the degrees of freedom are based on the variables, not on sample size.
@@ -32,17 +32,19 @@ Tofu$sales<-as.numeric(Tofu$sales)
 #So far seasonal looks good. All but week are over 0.9 for Std.all- standardised . Week is less relevant in predicting season.
 
 tofu.model.a<-
-'Seasonal =~major_holiday + other_holidays + week + season
+'Seasonal =~Major_hol + Other_hol + Week + Season
 
 Sales_area =~ Canada + SE + NE
 
-Customer_preference =~ Texture + Size + Promotion + Flavor + Waterpack
+Customer_preference =~ Texture + Size + Promo + Flavor
 
-Product_establishment =~ Temporary + New
+Product_establishment =~ Temp + New
 
-Sales_Group =~ Private_Label + Club + Retail'
+Sales_Group =~ Private_Label + Club + Retail
 
-tofu.fit.a<-cfa(model=tofu.model.a, data=Tofu)
+Sales~ Seasonal+Sales_area+Customer_preference+Product_establishment+Sales_Group'
+
+tofu.fit.a<-sem(model=tofu.model.a, data=Tofu)
 
 #This first model won't converge because at least 2 latent variables overlap and need combining (matrix is not positive-definite)
 #There are two few degrees of freedom to have latent constucts consisting of fewer than 3 variables-
@@ -52,66 +54,105 @@ tofu.fit.a<-cfa(model=tofu.model.a, data=Tofu)
 #Based on a 1 factor model of season I have dropped week as there is too much overlap with the other variables
 
 
-tofu.model.b<-'Seasonal =~major_holiday + other_holidays + season
+tofu.model.b<-'Seasonal =~Major_hol + Other_hol + S
+eason
 
-Customer_preference =~ Texture + Flavor + Promotion + Temporary + New
+Customer_preference =~ Texture + Flavor + Promo + Temp + New
 
 Presentation =~Private_Label + Club + Retail + Size
 
-Distribution =~Canada + SE + NE + Friday_Shipping + Other_Site'
+Distribution =~Canada + SE + NE + Friday_Shipping + Other_Site
 
-tofu.fit.b<-cfa(model=tofu.model.b, data=Tofu)
-
-summary(tofu.fit.b, standardized=TRUE, fit.measures=TRUE)
-
-#A solution has still "not been found" 
+Sales~ Seasonal+Customer_preference+Presentation+Distribution'
 
 
-tofu.model.c<-'Seasonal =~major_holiday + a*other_holidays + a*season
+tofu.fit.b<-sem(model=tofu.model.b, data=Tofu)
+
+#Some latent constructs still overlap
+
+
+tofu.model.c<-'Seasonal =~Major_hol + a*Other_hol + a*Season
 
 Customer_preference=~Texture + a*Flavor + a*Size
 
-Product_establishment=~New +a*Promotion + a*Temporary
+Type=~New +a*Promo + a*Temp
 
-Distribution =~Canada + a*SE + a*NE + a*Friday_Shipping +a*Other_Site'
+Distribution =~Canada + a*SE + a*NE + a*Friday_Shipping +a*Other_Site
 
-tofu.fit.c<-cfa(model=tofu.model.c, data=Tofu)
+Sales~ Seasonal+Customer_preference+Type+Distribution'
+
+tofu.fit.c<-sem(model=tofu.model.c, data=Tofu)
 summary(tofu.fit.c, standardized=TRUE, fit.measures=TRUE)
+
 
 #The model will converge without having sales group and size in the same model
 #But not with both as size closely reflects retail, club and private label.
+#CFI is very low- the model fits poorly
 #Try including retail with size etc
 #Combine sales group with customer preference to allow sufficient dfs
 
-tofu.model.d<-'Seasonal =~major_holiday + other_holidays + season
+tofu.model.d<-'Seasonal =~Major_hol + Other_hol + Season
 Customer_preference=~Texture + a*Flavor + a*Size + a*Retail + a*Private_Label + a*Club
-Product_establishment=~New +a*Promotion + a*Temporary
-Distribution =~Canada + SE + NE + Friday_Shipping +Other_Site'
+Type=~New +a*Promo + a*Temp
+Distribution =~Canada + SE + NE + Friday_Shipping +Other_Site
+Sales~ Seasonal+Customer_preference+Type+Distribution'
  
-tofu.fit.d<-cfa(model=tofu.model.d, data=Tofu
-#This causes issues with matrix not being positive-definitive: Retail, private and/or club are resampling some other variable.
+tofu.fit.d<-sem(model=tofu.model.d, data=Tofu)
 
-tofu.model.e<-'Seasonal =~major_holiday + a*other_holidays + a*season
+tofu.model.e<-'Seasonal =~Major_hol + a*Other_hol + a*Season
 Customer_preference=~Texture + a*Flavor  + a*Size
-Product_establishment=~New +a*Promotion + a*Temporary
+Product_establishment=~New +a*Promo + a*Temp
 Area =~Canada + a*SE + a*NE
-Distribution=~a*Friday_Shipping +a*Other_Site+ a*Retail+a*Private_Label'
-tofu.fit.e<-cfa(model=tofu.model.e, data=Tofu)
+Distribution=~a*Friday_Shipping +a*Other_Site+ a*Retail+a*Private_Label
+Sales~ Seasonal+Customer_preference+Product_establishment+Area+Distribution'
+tofu.fit.e<-sem(model=tofu.model.e, data=Tofu)
 
-#Still not converging- try dropping Club, which is not very informative
+summary(tofu.fit.e, standardized=TRUE, fit.measures=TRUE)
+
+#Also very poor fit
+#try dropping Club, which is not very informative
 #Distribution is better fitted if separated out again
 #I have confirmed the following fit well as one factor models before combining but there are still issues:
 #friday shipping is removed as it only applies to SE
+#Does not converge
+#Private label and club cannot be included with the other variables as they have so little variation.
+#Try replacing size with Retail and comparing back to model C
 
-tofu.model.f<-'Seasonal =~major_holiday + other_holidays + season
-Customer_preference=~Texture+Flavor
-Product_presentation=~Size +Retail+Promotion + Temporary + New
+tofu.model.f<-'Seasonal =~Major_hol + Other_hol + Season
+Type=~Size +Retail+Promo + Temp + New+ Texture+Flavor
 Distribution =~Canada + a*SE + a*NE
-Texture~~0.0207125*Texture'
+Sales~Seasonal+Type+Distribution'
 
-tofu.fit.f<-cfa(model=tofu.model.f, data=Tofu)
+tofu.fit.f<-sem(model=tofu.model.h, data=Tofu)
+summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
 
-modificationindices(tofu.fit.f, sort = TRUE)
+#The seasonal category variables are a good fit for the latent construct.
+#The other two latent constructs are less well supported
+#CFI now up to 0.4
+#Use summary to identify and deal with negative variances
+
+modificationindices(tofu.fit.h, sort = TRUE)
+
+tofu.model.h<-'Seasonal =~Major_hol + Other_hol + Season
+Type=~Size +Retail+Promo + Temp + New+ Texture+Flavor
+Distribution =~Canada + a*SE + a*NE
+Other_hol~~0.0207125*Other_hol
+Texture~~0.0207125*Texture
+Flavor~~0.001*Flavor
+Sales~Seasonal+Type+Distribution'
+
+tofu.fit.h<-sem(model=tofu.model.h, data=Tofu)
+summary(tofu.fit.h, standardized=TRUE, fit.measures=TRUE)
+
+
+
+#Texture~~0.0207125*Texture
+
+#Texture~~0.0207125*Texture
+#Flavor~~Temp
+#Flavor~~SE
+Sales~Seasonal+Product_presentation+Distribution'
+
 
 
 
@@ -120,33 +161,6 @@ fitmeasures(tofu.fit.c,c("aic","ecvi"))
 fitmeasures(tofu.fit.d,c("aic","ecvi"))
 #c has a lower AIC so retail should not go in customer preference in this way.
 
-#Try adding sales group constructs to distribution
-
-tofu.model.e<-'Seasonal =~major_holiday + other_holidays + season
-Customer_preference=~Texture + a*Flavor + a*Size
-Product_establishment=~New +a*Promotion + a*Temporary
-Distribution =~Canada + SE + NE + Friday_Shipping +Other_Site + Retail+Club+Private_Label'
-
-tofu.fit.e<-cfa(model=tofu.model.e, data=Tofu)
-summary(tofu.fit.e, standardized=TRUE, fit.measures=TRUE)
-
-#Does not converge
-#Private label and club cannot be included with the other variables as they have so little variation.
-
-#Try replacing size with Retail and comparing back to model C
-
-tofu.model.f<-'Seasonal =~major_holiday + other_holidays + season
-Product_presentation=~Size +Retail+Promotion + Temporary + New+ Texture+Flavor
-Distribution =~Canada + a*SE + a*NE
-Texture~~0.0207125*Texture
-Flavor~~Temporary
-Flavor~~SE
-sales~Seasonal+Product_presentation+Distribution'
-
-tofu.fit.f<-cfa(model=tofu.model.f, data=Tofu)
-summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
-
-modificationindices(tofu.fit.f, sort = TRUE)
 
 #You can use the above to see the logical recommended correlations to add
 
