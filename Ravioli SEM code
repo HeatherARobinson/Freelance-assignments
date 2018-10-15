@@ -224,129 +224,25 @@ summary(Rav.fit.5, standardized=TRUE, fit.measures=TRUE)
 #Major holidays and Retail have unusually high variances
 
 
-#The model will converge without either sales group or size in the same model
+Rav.model.6<-'Seasonal =~Major_hol + a*Other_hol + a*week_year
+Sales_context=~Retail + a*Club + a*Private_Label+a*Promo + a*Temp + a*New
+Sales~ Seasonal+Sales_context+Flavor+Region
+Major_hol~~0.1158697*Major_hol
+Retail~~0.2491006*Retail'
 
-#but not with both as size closely reflects retail, club and private label.
+Rav.fit.6<-sem(model=Rav.model.6, data=Rav)
+summary(Rav.fit.6, standardized=TRUE, fit.measures=TRUE)
+#Converges but an extremely poor model!
+#Flavor does not predict sales
 
-#CFI is very low- the model fits poorly
-
-#Try including retail with size etc
-
-#Combine sales group with customer preference to allow sufficient dfs
-
-
-
-tofu.model.d<-'Seasonal =~Major_hol + Other_hol + Season
-
-Customer_preference=~Texture + a*Flavor + a*Size + a*Retail + a*Private_Label + a*Club
-
-Type=~New +a*Promo + a*Temp
-
-Distribution =~Canada + SE + NE + Friday_Shipping +Other_Site
-
-Sales~ Seasonal+Customer_preference+Type+Distribution'
-
-tofu.fit.d<-sem(model=tofu.model.d, data=Tofu)
-
-
-
-summary(tofu.fit.d, standardized=TRUE, fit.measures=TRUE)
-
-
-
-#Also very poor fit (CFI<0.1), with some positive definitive issues implying we need fewer latent constructs
-
-#try dropping Club, which is not very informative
-
-#Distribution may be better fitted if separated out again
-
-
-
-#I have confirmed the following fit well as one factor models before combining but there are still issues:
-
-#friday shipping is removed as it only applies to SE
-
-#Private label and club cannot be included with the other variables as they have so little variation.
-
-#Try adding size back with with Retail and comparing back to model C
-
-
-
-tofu.model.f<-'Seasonal =~Major_hol + Other_hol + Season
-
-Type=~Size +Retail+Promo + Temp + New+ Texture+Flavor
-
-Distribution =~Canada + SE + NE
-
-Sales~Seasonal+Type+Distribution'
-
-
-
-tofu.fit.f<-sem(model=tofu.model.f, data=Tofu)
-
-summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
-
-
-
-#Now CFI is up to 0.485.
-
-#There is a negative variance for Flavor which needs addressing 
-
-#Size and retail resample each other- dropping retail improves the model:
-
-
-
-tofu.model.g<-'Seasonal =~Major_hol + Other_hol + Season
-
-Type=~Size+Promo + Temp + New+ Texture+Flavor
-
-Distribution =~Canada + SE + NE
-
-Sales~Seasonal+Type+Distribution
-
-New~~NE
-
-Canada~~Sales'
-
-
-
-tofu.fit.g<-sem(model=tofu.model.g, data=Tofu)
-
-summary(tofu.fit.g, standardized=TRUE, fit.measures=TRUE)
-
-
-
-modificationindices(tofu.fit.g,sort=TRUE)
-
-
-
-#Compare two fitted values
-
-fitmeasures(tofu.fit.c,c("aic","ecvi"))
-
-fitmeasures(tofu.fit.d,c("aic","ecvi"))
 
 
 
 anova(tofu.model1,tofu.model2)- #You can use this code to compare any 2 model fits with ANOVA.
 
-
-
 #In the model code, #~ shows that a manifest variable is predicting a latent variable. ~~ shows a correlation between variables.
 
-
-
 #POSSIBLE ERRORS- "not positive definite"- the wrong classes have been specified. 2 may need to be merged. 1 variable may be a combination of others.
-
-
-
-#If you have negative variances in std.all, set the variances manually in the model.
-
-#e.g. other_holidays~~0.165*other_holidays
-
-
-
-
 
 #The model can either be scaled by setting the variance of the latent variable to 1, and dividing this between the manifest variables
 
