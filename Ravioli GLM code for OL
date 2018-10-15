@@ -1,0 +1,52 @@
+
+#Creating an GLM to test for associations between individual variables and sales and significant interactions
+
+#No additional package installs needed
+
+Rav<-read.csv("Ravioli.csv")
+attach(Rav)
+Rav$Sales<-as.numeric(Rav$Sales)
+Rav<-Rav[!is.na(Rav$Sales),] #Make sure each row in the dataset has a sales value
+Rav$Major_hol<-as.factor(Rav$Major_hol)
+Rav$Other_hol<-as.factor(Rav$Other_hol)
+Rav$Friday_Shipping<-as.factor(Rav$Friday_Shipping)
+
+Rav$Temp<-as.factor(Rav$Temp)
+
+Rav$Flavor<-as.factor(Rav$Flavor)
+
+Rav$Promo<-as.factor(Rav$Promo)
+
+Rav$Private_Label<-as.factor(Rav$Private_Label)
+
+Rav$Club<-as.factor(Rav$Club)
+
+Rav$Retail<-as.factor(Rav$Retail)
+
+Rav$Region<-as.factor(Rav$Region)
+
+Rav$New<-as.factor(Rav$New)
+attach(Rav)
+
+GLM1<-glm(Sales~Region+Promo+Retail+Major_hol+Other_hol+Temp+New+week_month+week_year+Flavor+Club+Friday_Shipping+Private_Label, data=Rav,family="poisson")
+#We tell R we are using a Poisson distribution so that it knows sales is a count variable
+
+summary(GLM1)
+
+#We sequentially drop non significant variables (P value over 0.05) with the highest P values then reevaluate the model until only significant variables remain.
+
+GLM2 <- update(GLM1, .~.-Club)
+
+anova(GLM1,GLM2,test="Chisq") #If the P value for an ANOVA is <0.05, we would retain the variable
+GLM3 <- update(GLM2, .~.-Friday_Shipping)
+anova(GLM2,GLM3,test="Chisq")
+GLM4<-glm(Sales~Region*Retail+Promo+Major_hol*Other_hol+Temp*New+week_month+week_year+Flavor+Private_Label, data=Rav,family="poisson")
+summary(GLM4)
+GLM5 <- update(GLM4, .~.-Temp:New)
+anova(GLM4,GLM5,test="Chisq")
+GLM6 <- update(GLM5, .~.-Region:Retail)
+anova(GLM5,GLM6,test="Chisq")
+summary(GLM6)
+GLM7 <- update(GLM6, .~.-week_year)
+anova(GLM6,GLM7,test="Chisq")
+summary(GLM7)
