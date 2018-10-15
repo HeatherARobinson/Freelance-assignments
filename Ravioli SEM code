@@ -223,7 +223,6 @@ Rav.fit.5<-sem(model=Rav.model.5 , data=Rav)
 summary(Rav.fit.5, standardized=TRUE, fit.measures=TRUE)
 #Major holidays and Retail have unusually high variances
 
-
 Rav.model.6<-'Seasonal =~Major_hol + a*Other_hol + a*week_year
 Sales_context=~Retail + a*Club + a*Private_Label+a*Promo + a*Temp + a*New
 Sales~ Seasonal+Sales_context+Flavor+Region
@@ -232,8 +231,21 @@ Retail~~0.2491006*Retail'
 
 Rav.fit.6<-sem(model=Rav.model.6, data=Rav)
 summary(Rav.fit.6, standardized=TRUE, fit.measures=TRUE)
+
 #Converges but an extremely poor model!
-#Flavor does not predict sales
+#Flavor does not predict sales so I omit it here and check model fit
+
+Rav.model.7<-'Seasonal =~Major_hol + Other_hol + week_year
+Sales_context=~Retail + a*Club + a*Private_Label+a*Promo + a*Temp + a*New
+Sales~ Seasonal+Sales_context+Region
+Major_hol~~0.1158697*Major_hol
+Retail~~0.2491006*Retail'
+Rav.fit.7<-sem(model=Rav.model.7, data=Rav)
+summary(Rav.fit.7, standardized=TRUE, fit.measures=TRUE)
+
+
+
+
 
 
 
