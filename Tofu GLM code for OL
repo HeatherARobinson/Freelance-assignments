@@ -71,3 +71,7 @@ summary(GLM12)
 #It is therefore good that we include these in the SEM.
 #The variables that were most problematic to fit in the SEM (private label, club, retail and promotion) fell out of the GLM as not being significant to sales.
 #There are significant interactions between SE and Canada, major holiday and other holidays, and major holiday and season.
+
+#Print coefficients to csv
+
+results_df <-summary.glm(GLM12)$coefficients
