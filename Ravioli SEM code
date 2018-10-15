@@ -196,8 +196,7 @@ Rav.fit.2<-sem(model=Rav.model.2, data=Rav)
 
 Rav.model.3<-'Seasonal =~Major_hol + Other_hol + week_year + week_month
 Sales_group=~Retail + Club + Private_Label + Region
-Customer_preference =~ Promo + Flavor + Temp + New
-Sales~ Seasonal+Customer_preference+Sales_group'
+Sales~ Seasonal+Flavor+Temp+Sales_group+New+Promo'
 
 Rav.fit.3<-sem(model=Rav.model.3, data=Rav)
 #No more ovrlap errors
@@ -233,43 +232,12 @@ Rav.fit.6<-sem(model=Rav.model.6, data=Rav)
 summary(Rav.fit.6, standardized=TRUE, fit.measures=TRUE)
 
 #Converges but an extremely poor model!
-#Flavor does not predict sales so I omit it here and check model fit
 
-Rav.model.7<-'Seasonal =~Major_hol + Other_hol + week_year
-Sales_context=~Retail + a*Club + a*Private_Label+a*Promo + a*Temp + a*New
-Sales~ Seasonal+Sales_context+Region
+Rav.model.6<-'Seasonal =~Major_hol + a*Other_hol + a*week_year
+Sales_context=~Retail + a*Club + a*Private_Label+a*Promo + a*Temp + a*New +a$Region
+Sales~ Seasonal+Sales_context+Flavor'
 Major_hol~~0.1158697*Major_hol
 Retail~~0.2491006*Retail'
-Rav.fit.7<-sem(model=Rav.model.7, data=Rav)
-summary(Rav.fit.7, standardized=TRUE, fit.measures=TRUE)
 
-
-
-
-
-
-
-
-anova(tofu.model1,tofu.model2)- #You can use this code to compare any 2 model fits with ANOVA.
-
-#In the model code, #~ shows that a manifest variable is predicting a latent variable. ~~ shows a correlation between variables.
-
-#POSSIBLE ERRORS- "not positive definite"- the wrong classes have been specified. 2 may need to be merged. 1 variable may be a combination of others.
-
-#The model can either be scaled by setting the variance of the latent variable to 1, and dividing this between the manifest variables
-
-#OR we can set the variance of one of the manifest variables to 1 (more commonly used approach). This is the Lavaan default.
-
-
-
-#Interpreting: Different manifest variables have different loadings on the latent variables.
-
-#Std.all in the output shows these loadings. Close to 1 shows a strong relationship to the latent variable.
-
-#0.3 is typically considered an acceptable loading.
-
-#CFI and TLI should be between 0.9 and 1 to show that the model fits the data well
-
-#Our CFI is x which show the model is a good fit as it is close to 0.9
-
+#We can't support any latent constructs for ravioli. CFI is extremely low for all of these models <0.1
 
