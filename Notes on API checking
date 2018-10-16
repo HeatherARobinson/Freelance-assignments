@@ -1,0 +1,24 @@
+Notes on progress for Mike:
+
+Start with hyponatremia prep
+Discuss how to confirm 
+Function checked with Papermill_endpoint2 writing to basic_papermill_r_list_test.OUTPUT.ipynb
+
+#Confirm- are all workers in prep in the hyponatremia workbook?
+#Are there still redundant workers in hyponatremia workbook?
+
+#Not linked to any output URL (excluding those posting to commands):
+
+
+
+
+Review Hyponatremia notebook for gaps (https://healthlabs-4.appspot.com/view_results.html?workshop=hyponatremia&type=text):
+
+n with and without fragility fractures empty
+Some formatting errors with symbols e.g. na+. These may need wrapping within strings
+patient record duration (start and end year) missing- extract with lubridate
+all table 1 values set to 0- check with Mike/Cody this is as expected for the stage we are at
+Within results section:
+In results, case and control n missing
+% excluded missing
+Table 2 also empty needs populating
