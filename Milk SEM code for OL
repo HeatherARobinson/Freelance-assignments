@@ -1,0 +1,251 @@
+#Creating an SEM to describe the relationship between manifest variables and latent umbrella constructs
+
+#Using the Lavaan package
+Milk<-read.csv("Milk.csv")
+attach(Milk)
+
+###########################################################################################################################
+#Before running the SEM, run a preliminary PCA to guide model specification
+#We are using the package ade4 because it has functionality for differentiating categorical and continuous variables.
+library(ade4)
+Milk.x<-Milk[,c(3:14)]
+Milk.x$Major_hol<-as.factor(Milk.x$Major_hol)
+Milk.x$Sales<-as.numeric(Milk.x$Sales)
+Milk.x$Other_hol<-as.factor(Milk.x$Other_hol)
+Milk.x$Flavor<-as.factor(Milk.x$Flavor)
+Milk.x$Promo<-as.factor(Milk.x$Promo)
+Milk.x$Friday_Shipping<-as.factor(Milk.x$Friday_Shipping)
+Milk.x$Creamer<-as.factor(Milk.x$Creamer)
+
+ddr1 <- dudi.mix(Milk.x, add.square=FALSE,scannf = FALSE,nf=6)
+ddr1$eig #There are 6 principal components suggested by the model if we use a threshold of an Eigen value of 1.
+scatter(ddr1,scannf=TRUE,clab.row=0,clab.col=0.7)
+
+write.csv(ddr1$eig, file = "MilkEigenvalues.csv")
+################################################################################################################################
+
+
+
+library(lavaan)
+
+Milk<-read.csv("Milk.csv")
+attach(Milk)
+#The variances across the variables need to be similar. We can scale them if they are not:
+varTable(Milk)
+
+Milk$Sales<-as.numeric(Milk$Sales)/1000
+Milk$week_year<- Milk$Week_year/100 
+Milk$Flavor <- as.numeric(Milk$Flavor)/10
+
+#Each latent construct should contain at least 3 variables so that the latent variable can be estimated
+
+#because the degrees of freedom are based on the variables, not on sample size.
+
+#Do not construct a model that has 0 degrees of freedom
+
+
+
+#Define the model:
+
+# example: model<-'latent_variable =~manifest_variable1 + manifest_variable2 + manifest_variable3'
+
+
+
+Rav.model.a<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
+
+Sales_area =~ Canada + SE + NW + BA + MX + MW + Friday_Shipping
+
+Sales_group=~Retail + Club + Private_Label
+
+Customer_preference =~ Promo + Flavor
+
+Product_establishment =~ Temp + New
+
+Sales~ Seasonal+Sales_area+Customer_preference+Product_establishment+Sales_group'
+
+
+
+Rav.fit.a<-sem(model=Rav.model.a, data=Rav)
+
+
+
+#This first model won't converge because at least 2 latent variables overlap and need combining (matrix is not positive-definite)
+
+
+
+#There are two few degrees of freedom to have latent constucts consisting of fewer than 3 variables-
+
+
+
+#Combine product establishment with customer preference
+
+
+
+Rav.model.b<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
+
+Sales_area =~ Canada + SE + NW + BA + MX + MW + Friday_Shipping 
+
+Sales_group=~Retail + Club + Private_Label
+
+Customer_preference =~ Promo + Flavor + Temp + New
+
+Sales~ Seasonal+Sales_area+Customer_preference+Sales_group'
+
+
+
+Rav.fit.b<-sem(model=Rav.model.b, data=Rav)
+
+
+
+#Some latent constructs still overlap- try merging sales group and customer preference
+
+
+
+Rav.model.c<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
+
+Sales_context =~ Canada + SE + NW + BA + MX + MW + Friday_Shipping + Retail + Club + Private_Label
+
+Customer_preference =~ Promo + Flavor + Temp + New
+
+Sales~ Seasonal+Sales_context+Customer_preference'
+
+
+
+Rav.fit.c<-sem(model=Rav.model.c, data=Rav)
+
+
+
+#Still an issue with positive definite. 
+
+#Try instead combining seasonal with sales group
+
+
+
+Rav.model.d<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season + Retail + Club + Private_Label
+
+Customer_preference =~ Promo + Flavor + Temp + New
+
+Sales_context =~ Canada + SE + NW + BA + MX + MW + Friday_Shipping
+
+Sales~ Positioning+Sales_context+Customer_preference'
+
+
+
+Rav.fit.d<-sem(model=Rav.model.d, data=Rav)
+
+#Still overlap- try moving some variables
+
+
+
+Rav.model.e<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season + Retail + Club + Private_Label
+
+Product_establishment =~ Promo + Temp + New
+
+Sales_context =~ Canada + SE + NW + BA + MX + MW
+
+Sales~ Positioning+Sales_context+Product_establishment + Flavor + Friday_Shipping'
+
+
+
+Rav.fit.e<-sem(model=Rav.model.e, data=Rav)
+
+
+
+#Sales groups may overlap with areas- try moving these into sales context
+
+Rav.model.f<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season
+
+Product_establishment =~ Promo + Temp + New + Retail + Club + Private_Label
+
+Sales_context =~ Canada + SE + NW + BA + MX + MW
+
+Sales~ Positioning+Sales_context+Product_establishment + Flavor + Friday_Shipping'
+
+
+
+Rav.fit.f<-sem(model=Rav.model.f, data=Rav)
+
+#Collapse product establishment and sales context
+
+Rav.model.g<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season
+
+Sales_context =~ Canada + SE + NW + BA + MX + MW + Promo + Temp + New + Retail + Club + Private_Label
+
+Sales~ Positioning+Sales_context+Flavor + Friday_Shipping'
+
+
+
+Rav.fit.g<-sem(model=Rav.model.g, data=Rav)
+
+
+
+#Even now there is overlap. Move temporal variables in altogether
+
+Rav.model.h<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season  + Promo + Temp + New
+
+Sales_context =~ Canada + SE + NW + BA + MX + MW + Retail + Club + Private_Label
+
+Sales~ Positioning+Sales_context+Flavor + Friday_Shipping'
+
+
+
+Rav.fit.h<-sem(model=Rav.model.h, data=Rav)
+
+
+
+#Try testing single factor models to see if there is something that doesn't belong
+
+Rav.test<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season + Promo + Temp + New'
+
+Rav.fit.t<-cfa(model=Rav.test, data=Rav)
+
+summary(Rav.fit.t) #Promo, temp and new do not belong here
+
+Rav.test2<-'Sales_context =~ Canada + SE + NW + BA + MX + MW + Retail + Club + Private_Label'
+
+Rav.fit.t2<-cfa(model=Rav.test2, data=Rav)
+
+#There is redundancy within sales context
+
+
+
+table(Retail,Club)
+
+
+
+#Try reducing the temporal variables
+
+Rav.model.i<-'Positioning =~Major_hol + Other_hol + week_year + week_month
+
+Sales_area=~Canada + SE + NW + BA + MX + MW
+
+Sales_context=~ Retail + Club + Private_Label + Promo + Temp + New
+
+Sales~ Positioning+Sales_area + Sales_context+Flavor'
+
+Rav.fit.i<-sem(model=Rav.model.i, data=Rav)
+
+
+
+Rav.test3<-'Sales_context =~ Canada + SE + NW + BA + MX + MW'
+
+Rav.fit.t3<-cfa(model=Rav.test3, data=Rav)
+
+summary(Rav.fit.t3)
+
+
+
+Rav.model.1<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
+
+Sales_group=~Retail + Club + Private_Label
+
+Customer_preference =~ Promo + Flavor + Region
+
+Product_establishment =~ Temp + New
+
+Sales~ Seasonal+Customer_preference+Product_establishment+Sales_group + Friday_Shipping'
+
+
+
+Rav.fit.1<-sem(model=Rav.model.1, data=Rav)
+
