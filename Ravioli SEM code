@@ -133,5 +133,5 @@ summary(Rav.fit.i, standardized=TRUE, fit.measures=TRUE)
 #Converges, preferable model to latent construct model.
 
 sink(file="RavioliSEMOutputs.txt") 
-summary(Ravioli.fit.i,standardize=TRUE,fit.measures=TRUE)
+summary(Rav.fit.i,standardize=TRUE,fit.measures=TRUE)
 sink(NULL) 
