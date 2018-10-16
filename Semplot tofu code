@@ -28,3 +28,5 @@ summary(tofu.sem, standardized=TRUE, fit.measures=TRUE)
 
 semPaths(tofu.fit.f, title = FALSE,  what="stand",nCharNodes =0, color = list(lat = rgb(245, 253, 118,maxColorValue = 255), 
     man = rgb(155, 253, 175, maxColorValue = 255)),curvePivot = TRUE)
+#layout can = tree, tree2, circle, circle2, spring
+#rotation = 1/2/3/4
