@@ -19,7 +19,10 @@ Milk.x$Creamer<-as.factor(Milk.x$Creamer)
 
 ddr1 <- dudi.mix(Milk.x, add.square=FALSE,scannf = FALSE,nf=6)
 ddr1$eig #There are 6 principal components suggested by the model if we use a threshold of an Eigen value of 1.
-scatter(ddr1,scannf=TRUE,clab.row=0,clab.col=0.7)
+scatter(ddr1,scannf=FALSE,clab.row=0,clab.col=0.7)
+screeplot(ddr1, npcs = length(ddr1$eig), type = c("barplot"), 
+    main = deparse(substitute(ddr1)), col = c(rep("black", ddr1$nf),
+rep("grey", npcs - ddr1$nf)), …) #Plots eigen values in a scree plot
 
 write.csv(ddr1$eig, file = "MilkEigenvalues.csv")
 ################################################################################################################################
