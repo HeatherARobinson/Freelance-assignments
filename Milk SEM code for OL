@@ -104,4 +104,11 @@ Sales~ Seasonal+Customer_preference+Friday_Shipping'
 Milk.fit.g<-sem(model=Milk.model.g, data=Milk)
 summary(Milk.fit.g,standardize=TRUE,fit.measures=TRUE)
 
+Milk.model.h<-'Seasonal =~Major_hol + Other_hol + Week_month
+Customer_preference =~ Promo + Flavor + Temp + Creamer
+Sales~ Seasonal+Customer_preference+Friday_Shipping'
+
+Milk.fit.h<-sem(model=Milk.model.h, data=Milk)
+summary(Milk.fit.h,standardize=TRUE,fit.measures=TRUE)
+
 
