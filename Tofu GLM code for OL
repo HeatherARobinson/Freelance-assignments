@@ -75,3 +75,4 @@ summary(GLM12)
 #Print coefficients to csv
 
 results_df <-summary.glm(GLM12)$coefficients
+write.csv(results_df, file = "TofuCoefficients.csv")
