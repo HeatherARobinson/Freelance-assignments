@@ -50,3 +50,8 @@ summary(GLM6)
 GLM7 <- update(GLM6, .~.-week_year)
 anova(GLM6,GLM7,test="Chisq")
 summary(GLM7)
+
+#Print coefficients to csv
+
+results_df <-summary.glm(GLM7)$coefficients
+write.csv(results_df, file = "RavioliCoefficients.csv")
