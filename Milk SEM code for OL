@@ -104,7 +104,7 @@ Sales~ Seasonal+Customer_preference+Friday_Shipping'
 Milk.fit.g<-sem(model=Milk.model.g, data=Milk)
 summary(Milk.fit.g,standardize=TRUE,fit.measures=TRUE)
 
-Milk.model.h<-'Seasonal =~Major_hol + Other_hol + Week_month
+Milk.model.h<-'Seasonal =~Major_hol + Other_hol + Week_year +Week_month
 Customer_preference =~ Promo + Flavor + Temp + Creamer
 Sales~ Seasonal+Customer_preference+Friday_Shipping'
 
@@ -113,12 +113,13 @@ summary(Milk.fit.h,standardize=TRUE,fit.measures=TRUE)
 
 #Try collapsing customer preference
 
-Milk.model.i<-'Seasonal =~Major_hol + Other_hol + Week_month
+Milk.model.i<-'Seasonal =~Major_hol + Other_hol + Week_year + Week_month
 Sales~ Seasonal+Friday_Shipping+ + Promo + Flavor + Temp + Creamer'
 
 Milk.fit.i<-sem(model=Milk.model.i, data=Milk)
 summary(Milk.fit.i,standardize=TRUE,fit.measures=TRUE)
-#CFI=1
+#CFI=0.891
 
-
-
+sink(file="MilkSEMOutputs.txt") 
+summary(Milk.fit.i,standardize=TRUE,fit.measures=TRUE)
+sink(NULL) 
