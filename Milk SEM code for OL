@@ -111,4 +111,14 @@ Sales~ Seasonal+Customer_preference+Friday_Shipping'
 Milk.fit.h<-sem(model=Milk.model.h, data=Milk)
 summary(Milk.fit.h,standardize=TRUE,fit.measures=TRUE)
 
+#Try collapsing customer preference
+
+Milk.model.i<-'Seasonal =~Major_hol + Other_hol + Week_month
+Sales~ Seasonal+Friday_Shipping+ + Promo + Flavor + Temp + Creamer'
+
+Milk.fit.i<-sem(model=Milk.model.i, data=Milk)
+summary(Milk.fit.i,standardize=TRUE,fit.measures=TRUE)
+#CFI=1
+
+
 
