@@ -231,6 +231,10 @@ summary(Rav.fit.7, standardized=TRUE, fit.measures=TRUE)
 
 #We can't support any latent constructs for ravioli. CFI is extremely low for all of these models <0.1
 
+Rav.model.7<-Sales~ Major_hol + Other_hol + week_year + Flavor+Retail+Club +Private_Label+Promo +Temp+$Region'
+Rav.fit.7<-sem(model=Rav.model.7, data=Rav)
+summary(Rav.fit.7, standardized=TRUE, fit.measures=TRUE)
+
 sink(file="RavioliSEMOutputs.txt") 
 summary(Ravioli.fit.7,standardize=TRUE,fit.measures=TRUE)
 sink(NULL) 
