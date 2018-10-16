@@ -224,11 +224,13 @@ summary(Rav.fit.6, standardized=TRUE, fit.measures=TRUE)
 
 #Converges but an extremely poor model!
 
-Rav.model.6<-'Seasonal =~Major_hol + a*Other_hol + a*week_year
-Sales_context=~Retail + a*Club + a*Private_Label+a*Promo + a*Temp + a*New +a$Region
-Sales~ Seasonal+Sales_context+Flavor'
-Major_hol~~0.1158697*Major_hol
-Retail~~0.2491006*Retail'
+Rav.model.7<-'Seasonal =~Major_hol + a*Other_hol + a*week_year
+Sales~ Seasonal+Flavor+Retail+Club +Private_Label+Promo +Temp+$Region'
+Rav.fit.7<-sem(model=Rav.model.7, data=Rav)
+summary(Rav.fit.7, standardized=TRUE, fit.measures=TRUE)
 
 #We can't support any latent constructs for ravioli. CFI is extremely low for all of these models <0.1
 
+sink(file="RavioliSEMOutputs.txt") 
+summary(Ravioli.fit.7,standardize=TRUE,fit.measures=TRUE)
+sink(NULL) 
