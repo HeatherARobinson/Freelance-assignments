@@ -16,7 +16,7 @@ attach(Ravioli)
 
 library(ade4)
 
-Rav.x<-Ravioli[,c(3:22)]
+Rav.x<-Ravioli[,c(3:17)]
 
 Rav.x$Major_hol<-as.factor(Rav.x$Major_hol)
 
@@ -38,24 +38,15 @@ Rav.x$New<-as.factor(Rav.x$New)
 
 Rav.x$Temp<-as.factor(Rav.x$Temp)
 
-Rav.x$MX<-as.factor(Rav.x$MX)
+Rav.x$Region<-as.factor(Rav.x$Region)
 
-Rav.x$Canada<-as.factor(Rav.x$Canada)
-
-Rav.x$SE<-as.factor(Rav.x$SE)
-
-Rav.x$NW<-as.factor(Rav.x$NW)
-Rav.x$BA<-as.factor(Rav.x$BA)
-
-Rav.x$MW<-as.factor(Rav.x$MW)
+Rav.x$Sales<-as.numeric(Rav.x$Sales)
 
 ddr1 <- dudi.mix(Rav.x, add.square=FALSE,scannf = FALSE,nf=10)
-
-ddr1$eig #There are 21 principal components suggested by model if we use a threshold of an Eigen value of 1, suggesting only 2 are grouped.
-
+ddr1$eig #There are 6 principal components suggested by model if we use a threshold of an Eigen value of 1, suggesting only 2 are grouped.
 scatter(ddr1,scannf=TRUE,clab.row=0,clab.col=0.7)
 
-
+write.csv(ddr1$eig, file = "RavioliEigenvalues.csv")
 ################################################################################################################################
 
 library(lavaan)
