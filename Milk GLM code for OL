@@ -1,0 +1,44 @@
+#Creating an GLM to test for associations between individual variables and sales and significant interactions
+
+#No additional package installs needed
+#Please be aware this is the combined soymilk and creamer data
+
+Milk<-read.csv("Soymilk.csv")
+attach(Milk)
+Milk$Sales<-as.numeric(Milk$Sales)
+Milk<-Milk[!is.na(Milk$Sales),] #Make sure each row in the dataset has a sales value
+Milk$Major_hol<-as.factor(Milk$Major_hol)
+Milk$Other_hol<-as.factor(Milk$Other_hol)
+Milk$Friday_Shipping<-as.factor(Milk$Friday_Shipping)
+Milk$Temp<-as.factor(Milk$Temp)
+Milk$Flavor<-as.factor(Milk$Flavor)
+Milk$Promo<-as.factor(Milk$Promo)
+Milk$Private_Label<-as.factor(Milk$Private_Label)
+
+attach(Milk)
+
+GLM1<-glm(Sales~Promo+Major_hol*Other_hol+Temp+Creamer+Week_month*Week_year+Flavor+Friday_Shipping, data=Milk,family="poisson")
+#We tell R we are using a Poisson distribution so that it knows sales is a count variable
+
+summary(GLM1)
+
+#Try replacing Week_year with Season.
+
+GLM2 <- glm(Sales~Promo+Major_hol*Other_hol+Temp+Creamer+Week_month*Season+Flavor+Friday_Shipping, data=Milk,family="poisson")
+
+anova(GLM1,GLM2,test="Chisq") #Season is the better model
+
+summary(GLM2)
+
+#We sequentially drop non significant variables (P value over 0.05) with the highest P values then reevaluate the model until only significant variables remain.
+
+GLM3 <- update(GLM2, .~.-Other_hol)
+
+anova(GLM2,GLM3,test="Chisq") #Season is the better model
+
+summary(GLM3)
+
+#Print coefficients to csv
+
+results_df <-summary.glm(GLM3)$coefficients
+write.csv(results_df, file = "MilkCoefficients.csv")
