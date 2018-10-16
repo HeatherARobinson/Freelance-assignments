@@ -70,11 +70,10 @@ varTable(Rav)
 # example: model<-'latent_variable =~manifest_variable1 + manifest_variable2 + manifest_variable3'
 
 Rav.model.a<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
-Sales_area =~ Canada + SE + NW + BA + MX + MW + Friday_Shipping
-Sales_group=~Retail + Club + Private_Label
+Sales_area =~ Region + Friday_Shipping + Retail + Club + Private_Label
 Customer_preference =~ Promo + Flavor
 Product_establishment =~ Temp + New
-Sales~ Seasonal+Sales_area+Customer_preference+Product_establishment+Sales_group'
+Sales~ Seasonal+Sales_area+Customer_preference+Product_establishment'
 
 Rav.fit.a<-sem(model=Rav.model.a, data=Rav)
 
@@ -85,156 +84,54 @@ Rav.fit.a<-sem(model=Rav.model.a, data=Rav)
 #Combine product establishment with customer preference
 
 Rav.model.b<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
-Sales_area =~ Canada + SE + NW + BA + MX + MW + Friday_Shipping 
-Sales_group=~Retail + Club + Private_Label
+Sales_area =~ Region + Friday_Shipping + Retail + Club + Private_Label
 Customer_preference =~ Promo + Flavor + Temp + New
-Sales~ Seasonal+Sales_area+Customer_preference+Sales_group'
+Sales~ Seasonal+Sales_area+Customer_preference'
 
 Rav.fit.b<-sem(model=Rav.model.b, data=Rav)
 
-#Some latent constructs still overlap- try merging sales group and customer preference
-
-Rav.model.c<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
-Sales_context =~ Canada + SE + NW + BA + MX + MW + Friday_Shipping + Retail + Club + Private_Label
-Customer_preference =~ Promo + Flavor + Temp + New
-Sales~ Seasonal+Sales_context+Customer_preference'
-
-Rav.fit.c<-sem(model=Rav.model.c, data=Rav)
-
 #Still an issue with positive definite. 
-#Try instead combining seasonal with sales group
+#Try combining seasonal with sales group
 
-Rav.model.d<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season + Retail + Club + Private_Label
-Customer_preference =~ Promo + Flavor + Temp + New
-Sales_context =~ Canada + SE + NW + BA + MX + MW + Friday_Shipping
-Sales~ Positioning+Sales_context+Customer_preference'
-
+Rav.model.d<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season 
+Sales=~ Region + Friday_Shipping+promo+Customer_preference + Flavor'
 Rav.fit.d<-sem(model=Rav.model.d, data=Rav)
 #Still overlap- try moving some variables
 
-Rav.model.e<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season + Retail + Club + Private_Label
-Product_establishment =~ Promo + Temp + New
-Sales_context =~ Canada + SE + NW + BA + MX + MW
-Sales~ Positioning+Sales_context+Product_establishment + Flavor + Friday_Shipping'
-
+Rav.model.e<-'Sales_area =~ Region + Friday_Shipping + Retail + Club + Private_Label
+Customer_preference =~ Promo + Flavor + Temp + New
+Sales~Sales_area+Customer_preference + Friday_Shipping'
 Rav.fit.e<-sem(model=Rav.model.e, data=Rav)
+summary(Rav.fit.e, standardized=TRUE, fit.measures=TRUE)
+#There is no longer a positive definitive error
+#Promo and new should not be with temp and flavor
 
-#Sales groups may overlap with areas- try moving these into sales context
-Rav.model.f<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season
-Product_establishment =~ Promo + Temp + New + Retail + Club + Private_Label
-Sales_context =~ Canada + SE + NW + BA + MX + MW
-Sales~ Positioning+Sales_context+Product_establishment + Flavor + Friday_Shipping'
 
+Rav.model.f<-'Sales_area =~ Region + Friday_Shipping + Retail + Club + Private_Label
+Sales~Sales_area + Temp +New + Promo + Flavor'
 Rav.fit.f<-sem(model=Rav.model.f, data=Rav)
-#Collapse product establishment and sales context
-Rav.model.g<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season
-Sales_context =~ Canada + SE + NW + BA + MX + MW + Promo + Temp + New + Retail + Club + Private_Label
-Sales~ Positioning+Sales_context+Flavor + Friday_Shipping'
+summary(Rav.fit.f, standardized=TRUE, fit.measures=TRUE)
+#Retail and club have zero variance
 
+Rav.model.g<-'Sales_area =~ Region + Friday_Shipping + Private_Label
+Sales~Sales_area + Temp +New + Promo + Flavor'
 Rav.fit.g<-sem(model=Rav.model.g, data=Rav)
+summary(Rav.fit.g, standardized=TRUE, fit.measures=TRUE)
+#Converges with low CFI (<0.3)
+modindices(Rav.fit.g)
 
-#Even now there is overlap. Move temporal variables in altogether
-Rav.model.h<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season  + Promo + Temp + New
-Sales_context =~ Canada + SE + NW + BA + MX + MW + Retail + Club + Private_Label
-Sales~ Positioning+Sales_context+Flavor + Friday_Shipping'
-
+Rav.model.h<-'Sales_area =~ Region + Friday_Shipping + Private_Label
+Sales~Sales_area + Temp +New + Promo + Flavor
+Sales_area~Flavor'
 Rav.fit.h<-sem(model=Rav.model.h, data=Rav)
+summary(Rav.fit.h, standardized=TRUE, fit.measures=TRUE)
+#Converges with low CFI (<0.5), Region now has neg. variance
 
-#Try testing single factor models to see if there is something that doesn't belong
-Rav.test<-'Positioning =~Major_hol + Other_hol + week_year + week_month + Season + Promo + Temp + New'
-Rav.fit.t<-cfa(model=Rav.test, data=Rav)
-summary(Rav.fit.t) #Promo, temp and new do not belong here
-Rav.test2<-'Sales_context =~ Canada + SE + NW + BA + MX + MW + Retail + Club + Private_Label'
-Rav.fit.t2<-cfa(model=Rav.test2, data=Rav)
-#There is redundancy within sales context
-
-table(Retail,Club)
-
-#Try reducing the temporal variables
-Rav.model.i<-'Positioning =~Major_hol + Other_hol + week_year + week_month
-Sales_area=~Canada + SE + NW + BA + MX + MW
-Sales_context=~ Retail + Club + Private_Label + Promo + Temp + New
-Sales~ Positioning+Sales_area + Sales_context+Flavor'
+Rav.model.i<-'Sales~Temp +New + Promo + Flavor + Region + Friday_Shipping + Private_Label+Flavor'
 Rav.fit.i<-sem(model=Rav.model.i, data=Rav)
-
-Rav.test3<-'Sales_context =~ Canada + SE + NW + BA + MX + MW'
-Rav.fit.t3<-cfa(model=Rav.test3, data=Rav)
-summary(Rav.fit.t3)
-#The problem is coming from area- there is so little overlap.
-
-#Recode area- now Region variable
-0:none of those specified
-1:Canada
-2:NW
-3:BA
-4.MW, NW, SE
-5:MX
-
-Rav.model.1<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
-Sales_group=~Retail + Club + Private_Label
-Customer_preference =~ Promo + Flavor + Region
-Product_establishment =~ Temp + New
-Sales~ Seasonal+Customer_preference+Product_establishment+Sales_group + Friday_Shipping'
-
-Rav.fit.1<-sem(model=Rav.model.1, data=Rav)
-
-Rav.model.2<-'Seasonal =~Major_hol + Other_hol + week_year + week_month + Season
-Sales_group=~Retail + Club + Private_Label
-Customer_preference =~ Promo + Flavor + Region+Temp + New
-Sales~ Seasonal+Customer_preference+Sales_group'
-
-Rav.fit.2<-sem(model=Rav.model.2, data=Rav)
-
-Rav.model.3<-'Seasonal =~Major_hol + Other_hol + week_year + week_month
-Sales_group=~Retail + Club + Private_Label + Region
-Sales~ Seasonal+Flavor+Temp+Sales_group+New+Promo'
-
-Rav.fit.3<-sem(model=Rav.model.3, data=Rav)
-#No more ovrlap errors
-#But still no convergence
-
-Rav.model.4<-'Seasonal =~Major_hol + a*Other_hol + a*week_year
-Sales_group=~Retail + a*Club + a*Private_Label
-Customer_preference =~Promo + a*Temp + a*New
-Sales~ Seasonal+Customer_preference+Sales_group+Flavor+Region'
-
-Rav.fit.4<-sem(model=Rav.model.4, data=Rav)
-
-summary(Rav.fit.4, standardized=TRUE, fit.measures=TRUE)
- 
-#This still fails to converge
-
-Rav.model.5<-'Seasonal =~Major_hol + a*Other_hol + a*week_year
-Sales_context=~Retail + a*Club + a*Private_Label+a*Promo + a*Temp + a*New
-Sales~ Seasonal+Sales_context+Flavor+Region'
-
-Rav.fit.5<-sem(model=Rav.model.5 , data=Rav)
-
-summary(Rav.fit.5, standardized=TRUE, fit.measures=TRUE)
-#Major holidays and Retail have unusually high variances
-
-Rav.model.6<-'Seasonal =~Major_hol + a*Other_hol + a*week_year
-Sales_context=~Retail + a*Club + a*Private_Label+a*Promo + a*Temp + a*New
-Sales~ Seasonal+Sales_context+Flavor+Region
-Major_hol~~0.1158697*Major_hol
-Retail~~0.2491006*Retail'
-
-Rav.fit.6<-sem(model=Rav.model.6, data=Rav)
-summary(Rav.fit.6, standardized=TRUE, fit.measures=TRUE)
-
-#Converges but an extremely poor model!
-
-Rav.model.7<-'Seasonal =~Major_hol + a*Other_hol + a*week_year
-Sales~ Seasonal+Flavor+Retail+Club +Private_Label+Promo +Temp+$Region'
-Rav.fit.7<-sem(model=Rav.model.7, data=Rav)
-summary(Rav.fit.7, standardized=TRUE, fit.measures=TRUE)
-
-#We can't support any latent constructs for ravioli. CFI is extremely low for all of these models <0.1
-
-Rav.model.7<-Sales~ Major_hol + Other_hol + week_year + Flavor+Retail+Club +Private_Label+Promo +Temp+$Region'
-Rav.fit.7<-sem(model=Rav.model.7, data=Rav)
-summary(Rav.fit.7, standardized=TRUE, fit.measures=TRUE)
+summary(Rav.fit.i, standardized=TRUE, fit.measures=TRUE)
+#Converges, preferable model to latent construct model.
 
 sink(file="RavioliSEMOutputs.txt") 
-summary(Ravioli.fit.7,standardize=TRUE,fit.measures=TRUE)
+summary(Ravioli.fit.i,standardize=TRUE,fit.measures=TRUE)
 sink(NULL) 
