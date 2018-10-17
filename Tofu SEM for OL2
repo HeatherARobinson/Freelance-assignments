@@ -34,11 +34,19 @@ Tofu.x$Flavor<-as.factor(Tofu.x$Flavor)
 Tofu.x$Canada<-as.factor(Tofu.x$Canada)
 Tofu.x$SE<-as.factor(Tofu.x$SE)
 Tofu.x$NE<-as.factor(Tofu.x$NE)
+Tofu.x$Sales<-as.numeric(Tofu.x$Sales)
 
-dd1 <- dudi.mix(Tofu.x, add.square=FALSE,scannf = FALSE,nf=5)
+dd1 <- dudi.mix(Tofu.x, add.square=FALSE,scannf = FALSE,nf=)
 dd1$eig #There are 14 principal components suggested by model if we use a threshold of an Eigen value of 1, suggesting only six are grouped.
 scatter(dd1,scannf=TRUE,clab.row=0,clab.col=0.7)
 
+screeplot(dd1, npcs = length(dd1$eig), 
+type = c("barplot", "lines"), main = "", col = c(rep("black", 11),
+rep("grey", 17)))
+
+scatter(dd1$l1,xax = 1, yax = 2, clab.row = 0.75, clab.col = 1,posieig="none")
+
+plot(dd1$li,color="royalblue")
 
 ################################################################################################################################
 library(lavaan)
