@@ -1,0 +1,14 @@
+library(lavaan)
+library(semPlot)
+Rav<-read.csv("Ravioli.csv")
+attach(Rav)
+
+Rav$Sales<-as.numeric(Rav$Sales)/1000
+Rav$week_year<- Rav$week_year/100 
+Rav$Flavor <- as.numeric(Rav$Flavor)/10
+Rav$Region <- as.numeric(Rav$Region)/10
+
+Rav.model.i<-'Sales~Temp +New + Promo + Flavor + Region + Friday_Shipping + Private_Label+Flavor'
+Rav.fit.i<-sem(model=Rav.model.i, data=Rav)
+summary(Rav.fit.i, standardized=TRUE, fit.measures=TRUE)
+
