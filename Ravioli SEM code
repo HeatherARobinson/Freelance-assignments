@@ -13,38 +13,33 @@ attach(Ravioli)
 
 #We are using the package ade4 because it has functionality for differentiating categorical and continuous variables.
 
-
 library(ade4)
 
 Rav.x<-Ravioli[,c(3:17)]
-
 Rav.x$Major_hol<-as.factor(Rav.x$Major_hol)
-
 Rav.x$Other_hol<-as.factor(Rav.x$Other_hol)
-
 Rav.x$Flavor<-as.factor(Rav.x$Flavor)
-
 Rav.x$Promo<-as.factor(Rav.x$Promo)
-
 Rav.x$Friday_Shipping<-as.factor(Rav.x$Friday_Shipping)
-
 Rav.x$Private_Label<-as.factor(Rav.x$Private_Label)
-
 Rav.x$Club<-as.factor(Rav.x$Club)
-
 Rav.x$Retail<-as.factor(Rav.x$Retail)
-
 Rav.x$New<-as.factor(Rav.x$New)
-
 Rav.x$Temp<-as.factor(Rav.x$Temp)
-
 Rav.x$Region<-as.factor(Rav.x$Region)
-
 Rav.x$Sales<-as.numeric(Rav.x$Sales)
 
-ddr1 <- dudi.mix(Rav.x, add.square=FALSE,scannf = FALSE,nf=10)
-ddr1$eig #There are 6 principal components suggested by model if we use a threshold of an Eigen value of 1, suggesting only 2 are grouped.
-scatter(ddr1,scannf=TRUE,clab.row=0,clab.col=0.7)
+ddr1 <- dudi.mix(Rav.x, add.square=FALSE,scannf = FALSE,nf=2, grid=FALSE)
+
+ddr1$eig #There are 11 principal components suggested by the model if we use a threshold of an Eigen value of 1, suggesting only 2 are grouped.
+screeplot(ddr1, npcs = length(ddr1$eig), 
+type = c("barplot", "lines"), main = "", col = c(rep("black", 11),
+rep("grey", 12)))
+
+library(FactoClass)
+scatter.dudi(ddr1$l1,xax = 1, yax = 2, clab.row = 0.75, clab.col = 1,posieig="none")
+
+
 
 write.csv(ddr1$eig, file = "RavioliEigenvalues.csv")
 ################################################################################################################################
