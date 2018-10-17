@@ -7,8 +7,12 @@ Rav$Sales<-as.numeric(Rav$Sales)/1000
 Rav$week_year<- Rav$week_year/100 
 Rav$Flavor <- as.numeric(Rav$Flavor)/10
 Rav$Region <- as.numeric(Rav$Region)/10
+Rav$Friday_Ship<-Rav$Friday_Shipping
 
-Rav.model.i<-'Sales~Temp +New + Promo + Flavor + Region + Friday_Shipping + Private_Label+Flavor'
+Rav.model.i<-'Sales~Temp +New + Promo + Flavor + Region + Friday_Ship + Private_Label+Flavor'
 Rav.fit.i<-sem(model=Rav.model.i, data=Rav)
 summary(Rav.fit.i, standardized=TRUE, fit.measures=TRUE)
+
+semPaths(Rav.fit.i, rotation = 2, what="stand",edge.color="black",
+nCharNodes=0, nCharEdges=0,sizeMan=14,sizeMan2=7,sizeLat=14,sizeLat2=14,fade=FALSE,label.cex=0.75,label.norm="OOOOOOO")
 
