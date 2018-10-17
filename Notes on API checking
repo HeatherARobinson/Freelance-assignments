@@ -8,12 +8,11 @@ Function checked with Papermill_endpoint2 writing to basic_papermill_r_list_test
 
 #Confirm- are all workers in prep in the hyponatremia workbook?
 #Are there still redundant workers in hyponatremia workbook?
+
 Redundant in prep:count_chronic_and_recent_hn_without_condition
 
 #Hyponatremia workers not linked to any output URL (excluding those posting to commands):
-
-
-
+gnomeLogisticRegression (CN)
 
 Review Hyponatremia notebook for gaps (https://healthlabs-4.appspot.com/view_results.html?workshop=hyponatremia&type=text):
 
