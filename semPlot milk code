@@ -1,0 +1,30 @@
+library(lavaan)
+library(semPlot)
+
+Milk<-read.csv("Soymilk.csv")
+attach(Milk)
+
+Milk$Sales<-as.numeric(Milk$Sales)/100
+Milk$Week_year<- Milk$Week_year/10
+Milk$Flavor <- as.numeric(Milk$Flavor)
+Milk$Promo<- as.numeric(Milk$Promo)
+Milk$Temp<- as.numeric(Milk$Temp)*10
+Milk$Private_Label<- as.numeric(Milk$Private_Label)
+Milk$Friday_Ship<- as.numeric(Milk$Friday_Shipping)
+Milk$Major_hol<- as.numeric(Milk$Major_hol)
+Milk$Other_hol<- as.numeric(Milk$Other_hol)
+
+Milk.model.i<-'Seasonal =~Major_hol + Other_hol + Week_year + Week_month
+Sales~ Seasonal+Friday_Ship + Promo + Flavor + Temp + Creamer'
+
+Milk.fit.i<-sem(model=Milk.model.i, data=Milk)
+summary(Milk.fit.i,standardize=TRUE,fit.measures=TRUE)
+#CFI=0.891
+
+semPaths(Milk.fit.i, rotation = 2, what="stand",color = list(lat = c("LightCyan"),man=c("LightCyan")),edge.color="black",
+nCharNodes=0, nCharEdges=0,sizeMan=12,sizeMan2=7,groups="latents",sizeLat=14,sizeLat2=14,fade=FALSE,label.cex=0.75,label.norm="OOOOOOO")
+
+#layout can be tree, tree2, circle, circle2, spring. We are using the default, which is tree.
+
+
+
