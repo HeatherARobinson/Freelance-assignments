@@ -4,7 +4,16 @@ Start with hyponatremia prep
 Discuss how to confirm those posting internally
 Confirm if those reporting ...Parameter Preview... rather than listing Old Parameters are intentionally not yet linked/redundant
 Or if the parameters are timing out whilst loading and therefore are hidden from view
-Function checked with Papermill_endpoint2 writing to basic_papermill_r_list_test.OUTPUT.ipynb
+
+Functions checked:
+Papermill_endpoint2 writing to basic_papermill_r_list_test.OUTPUT.ipynb
+
+
+
+
+
+
+
 
 #Confirm- are all workers in prep in the hyponatremia workbook?
 #Are there still redundant workers in hyponatremia workbook?
