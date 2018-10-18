@@ -1,6 +1,6 @@
-Notes on progress for Mike:
+Notes on progress:
 
-Start with hyponatremia prep
+Start with hyp prep
 Discuss how to confirm those posting internally
 Confirm if those reporting ...Parameter Preview... rather than listing Old Parameters are intentionally not yet linked/redundant
 Or if the parameters are timing out whilst loading and therefore are hidden from view
@@ -15,15 +15,15 @@ Papermill_endpoint2 writing to basic_papermill_r_list_test.OUTPUT.ipynb
 
 
 
-#Confirm- are all workers in prep in the hyponatremia workbook?
-#Are there still redundant workers in hyponatremia workbook?
+#Confirm- are all workers in prep in the hyp workbook?
+#Are there still redundant workers in hyp workbook?
 
 Redundant in prep:count_chronic_and_recent_hn_without_condition
 
-#Hyponatremia workers not linked to any output URL (excluding those posting to commands):
+#Hyp workers not linked to any output URL (excluding those posting to commands):
 gnomeLogisticRegression (CN)
 
-Review Hyponatremia notebook for gaps (https://healthlabs-4.appspot.com/view_results.html?workshop=hyponatremia&type=text):
+Review Hyp notebook for gaps:
 
 n with and without fragility fractures empty
 Some formatting errors with symbols e.g. na+. These may need wrapping within strings
