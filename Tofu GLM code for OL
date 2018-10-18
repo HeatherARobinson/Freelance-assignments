@@ -76,3 +76,11 @@ summary(GLM12)
 
 results_df <-summary.glm(GLM12)$coefficients
 write.csv(results_df, file = "TofuCoefficients.csv")
+
+
+#Confirm relevance of Poisson model (goodness of fit)
+
+pchisq(summary(GLM12)$deviance,
+           summary(GLM12)$df.residual)
+
+           #Result=1 (a good fit using a Poisson)
