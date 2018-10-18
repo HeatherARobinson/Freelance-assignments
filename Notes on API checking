@@ -1,4 +1,4 @@
-Notes on progress:
+may noNotes on progress:
 
 Start with hyp prep
 Discuss how to confirm those posting internally
@@ -8,13 +8,6 @@ Or if the parameters are timing out whilst loading and therefore are hidden from
 Functions checked:
 Papermill_endpoint2 writing to basic_papermill_r_list_test.OUTPUT.ipynb
 
-
-
-
-
-
-
-
 #Confirm- are all workers in prep in the hyp workbook?
 #Are there still redundant workers in hyp workbook?
 #Confirm meaning of JSON {u'use_legacy_sql': u'True'}
@@ -22,10 +15,24 @@ Papermill_endpoint2 writing to basic_papermill_r_list_test.OUTPUT.ipynb
 Redundant in prep:count_chronic_and_recent_hn_without_condition
 regression_thiazide
 
-Not sure: count_chronic_and_recent_hn_without_condition
+#Template gaps from unlinked sources (may not be ready to link yet)
+1.count case
+2.count cases no fragility
+3.ORs for chronic recent & combined
+4.Dates study start and end
+5.ORs for table 1 (from model 4)
+6.% female
+7.average age at fracture
+8.SD average age at fracture
+9.Adjusted ORs
 
 #Hyp workers not linked to any output URL (excluding those posting to commands):
-gnomeLogisticRegression (CN)
+
+count_chronic_and_recent_hn_without_condition - feeds into 2
+stddev_age - results come out, not linked to notebook - feeds into 8?
+gnomeLogisticRegression (CN)- no input or output- feeds into 5?
+regression_recent_hyponatremia- no output, another logistic regression worker - feeds into 5?
+regression_chronic_hyponatremia- input from final_case_control_set, no output - feeds into 5?
 
 Review Hyp notebook for gaps:
 
