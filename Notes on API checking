@@ -17,8 +17,12 @@ Papermill_endpoint2 writing to basic_papermill_r_list_test.OUTPUT.ipynb
 
 #Confirm- are all workers in prep in the hyp workbook?
 #Are there still redundant workers in hyp workbook?
+#Confirm meaning of JSON {u'use_legacy_sql': u'True'}
 
 Redundant in prep:count_chronic_and_recent_hn_without_condition
+regression_thiazide
+
+Not sure: count_chronic_and_recent_hn_without_condition
 
 #Hyp workers not linked to any output URL (excluding those posting to commands):
 gnomeLogisticRegression (CN)
