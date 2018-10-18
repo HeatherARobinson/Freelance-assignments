@@ -42,3 +42,12 @@ summary(GLM3)
 
 results_df <-summary.glm(GLM3)$coefficients
 write.csv(results_df, file = "MilkCoefficients.csv")
+
+#Confirm relevance of Poisson model (goodness of fit)
+
+
+
+pchisq(summary(GLM3)$deviance,
+           summary(GLM3)$df.residual)
+
+           #Result=1 (a good fit using a Poisson)
