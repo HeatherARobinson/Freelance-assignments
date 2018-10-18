@@ -7,13 +7,12 @@ Or if the parameters are timing out whilst loading and therefore are hidden from
 
 Functions checked:
 Papermill_endpoint2 writing to basic_papermill_r_list_test.OUTPUT.ipynb
+papermill_hl_clogit_local writing to home/jovyan/workshops/poison/xue/hl_clogit_local.OUTPUT.ipynb. 
+
 
 #Confirm- are all workers in prep in the hyp workbook?
 #Are there still redundant workers in hyp workbook?
 #Confirm meaning of JSON {u'use_legacy_sql': u'True'}
-
-Redundant in prep:count_chronic_and_recent_hn_without_condition
-regression_thiazide
 
 #Template gaps from unlinked sources (may not be ready to link yet)
 1.count case
@@ -28,11 +27,12 @@ regression_thiazide
 
 #Hyp workers not linked to any output URL (excluding those posting to commands):
 
-count_chronic_and_recent_hn_without_condition - feeds into 2
+count_chronic_and_recent_hn_without_condition - feeds into 2? results correct not linked to output
 stddev_age - results come out, not linked to notebook - feeds into 8?
 gnomeLogisticRegression (CN)- no input or output- feeds into 5?
 regression_recent_hyponatremia- no output, another logistic regression worker - feeds into 5?
 regression_chronic_hyponatremia- input from final_case_control_set, no output - feeds into 5?
+thiazide_history-no inputs or outputs- redundant?
 
 Review Hyp notebook for gaps:
 
