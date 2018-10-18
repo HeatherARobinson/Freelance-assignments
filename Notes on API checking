@@ -5,17 +5,21 @@ Discuss how to confirm those posting internally
 Confirm if those reporting ...Parameter Preview... rather than listing Old Parameters are intentionally not yet linked/redundant
 Or if the parameters are timing out whilst loading and therefore are hidden from view
 
-Functions checked:
+Functions checked (hypernatremia):
 Papermill_endpoint2 writing to basic_papermill_r_list_test.OUTPUT.ipynb
-papermill_hl_clogit_local writing to home/jovyan/workshops/poison/xue/hl_clogit_local.OUTPUT.ipynb. 
+papermill_hl_clogit_local writing to home/jovyan/workshops/poison/xue/hl_clogit_local.OUTPUT.ipynb.
+
+Functions checked (hypernatremia v):
+Papermill_endpoint2 writing to basic_papermill_r_list_test.OUTPUT.ipynb
+papermill_hl_clogit_local writing to home/jovyan/workshops/poison/xue/hl_clogit_local.OUTPUT.ipynb.
 
 
 #Confirm- are all workers in prep in the hyp workbook?
 #Are there still redundant workers in hyp workbook?
 #Confirm meaning of JSON {u'use_legacy_sql': u'True'}
 
-#Template gaps from unlinked sources (may not be ready to link yet)
-1.count case
+#Hyponatremia Template gaps from unlinked sources (may not be ready to link yet)
+1.count cases
 2.count cases no fragility
 3.ORs for chronic recent & combined
 4.Dates study start and end
@@ -25,7 +29,14 @@ papermill_hl_clogit_local writing to home/jovyan/workshops/poison/xue/hl_clogit_
 8.SD average age at fracture
 9.Adjusted ORs
 
-#Hyp workers not linked to any output URL (excluding those posting to commands):
+#Hyponatremia v Template gaps from unlinked sources (may not be ready to link yet)
+
+Disease history of hypotension, osteoporosis
+ORs for mean and imputed BMI 
+Med history for PPIs, loop diuretics, behavioural history tobacco and alcohol
+Adjusted ORs for chronic hyp, recent hyp, no hyp, only chronic, only recent, both
+
+#Hyponatemia workers not linked to any output URL (excluding those posting to commands):
 
 count_chronic_and_recent_hn_without_condition - feeds into 2? results correct not linked to output
 stddev_age - results come out, not linked to notebook - feeds into 8?
@@ -33,6 +44,12 @@ gnomeLogisticRegression (CN)- no input or output- feeds into 5?
 regression_recent_hyponatremia- no output, another logistic regression worker - feeds into 5?
 regression_chronic_hyponatremia- input from final_case_control_set, no output - feeds into 5?
 thiazide_history-no inputs or outputs- redundant?
+
+#Hyponatemia_verbalis workers not linked to any output URL (excluding those posting to commands):
+
+regression_chronic_and_recent_hyponatremia - conducts model 4 of the regression. Running creates internal server error
+Input is final_case_control_set. When running final_case_control_set it says it finishes.
+regression_ssri- runs but no output. Again the input is final_case_control_set
 
 Review Hyp notebook for gaps:
 
@@ -44,3 +61,6 @@ Within results section:
 In results, case and control n missing
 % excluded missing
 Table 2 also empty needs populating
+
+
+
