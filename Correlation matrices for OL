@@ -1,0 +1,26 @@
+#Create a correlation matrix for the variables, also mean and SD.
+tofu<-read.csv("Tofu2.csv")
+tofu.y<-tofu[,c(4:22)]
+TOF<-cor(tofu.y)
+A<-round(TOF, 2)
+write.csv(A, file = "TofuCorrelations.csv")
+
+milk<-read.csv("Soymilk.csv")
+milk.y<-milk[,c(4:13)]
+MIL<-cor(milk.y)
+B<-round(MIL, 2)
+write.csv(B, file = "MilkCorrelations.csv")
+
+rav<-read.csv("Ravioli.csv")
+rav.y<-rav[,c(4:17)]
+RAV<-cor(rav.y)
+C<-round(RAV, 2)
+write.csv(C, file = "RavCorrelations.csv")
+
+library(pastecs)
+stat.desc(rav.y) #for means
+stat.desc(milk.y)
+stat.desc(tofu.y)
+
+
+
