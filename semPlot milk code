@@ -26,5 +26,5 @@ nCharNodes=0, nCharEdges=0,sizeMan=14,sizeMan2=7,sizeLat=14,sizeLat2=14,fade=FAL
 
 #layout can be tree, tree2, circle, circle2, spring. We are using the default, which is tree.
 
-
+summary(Milk.fit.i)$coefficients[,4]
 
