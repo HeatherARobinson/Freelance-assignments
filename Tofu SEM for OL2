@@ -156,17 +156,23 @@ Canada~~Sales'
 tofu.fit.g<-sem(model=tofu.model.g, data=Tofu)
 summary(tofu.fit.g, standardized=TRUE, fit.measures=TRUE)
 
-modificationindices(tofu.fit.g,sort=TRUE)
-sink(file="TofuSEMOutputs.txt") 
-summary(tofu.fit.g,standardize=TRUE,fit.measures=TRUE)
-sink(NULL) 
+#As some variables sit poorly in the type construct, try these as manifest variables
+
+tofu.model.h<-'Seasonal =~Major_hol + Other_hol + Season
+Type=~Size+ Temp + Flavor
+Distribution =~Canada + SE + NE
+Sales~Seasonal+Type+Distribution+Promo+Texture+New
+'
+tofu.fit.h<-sem(model=tofu.model.h, data=Tofu)
+summary(tofu.fit.h, standardized=TRUE, fit.measures=TRUE)
+#Model h is a much poorer fit so revert to model  g
 
 ########################################################
 #Compare two fitted values
 fitmeasures(tofu.fit.c,c("aic","ecvi"))
 fitmeasures(tofu.fit.d,c("aic","ecvi"))
 
-anova(tofu.model1,tofu.model2)- #You can use this code to compare any 2 model fits with ANOVA.
+anova(tofu.model.g,tofu.model.h)- #You can use this code to compare any 2 model fits with ANOVA.
 
 #In the model code, #~ shows that a manifest variable is predicting a latent variable. ~~ shows a correlation between variables.
 
