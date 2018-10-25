@@ -25,6 +25,11 @@ screeplot(ddr1, npcs = length(ddr1$eig), type = c("barplot"), main= "",
 plot(ddr1$l1,col="royalblue")
 
 write.csv(ddr1$eig, file = "MilkEigenvalues.csv")
+
+sink(file="MilkComponentCorrelations.txt") 
+ddr1$co
+sink(NULL) 
+
 ################################################################################################################################
 
 library(lavaan)
