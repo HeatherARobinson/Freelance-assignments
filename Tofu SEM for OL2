@@ -154,30 +154,78 @@ summary(tofu.fit.f, standardized=TRUE, fit.measures=TRUE)
 tofu.model.g<-'Seasonal =~Major_hol + Other_hol + Season
 Type=~Size+Promo + Temp + New+ Texture+Flavor
 Distribution =~Canada + SE + NE
-Sales~Seasonal+Type+Distribution
-New~~NE
-Canada~~Sales'
+Sales~Seasonal+Type+Distribution+Promo+Texture+New'
 
 tofu.fit.g<-sem(model=tofu.model.g, data=Tofu)
-summary(tofu.fit.g, standardized=TRUE, fit.measures=TRUE)
-
-#As some variables sit poorly in the type construct, try these as manifest variables
+#Some of the observed variances are negative so we need to adjust them by their own variance ()
+summary(tofu.fit.g)
+var(Flavor)
 
 tofu.model.h<-'Seasonal =~Major_hol + Other_hol + Season
-Type=~Size+ Temp + Flavor
-Distribution =~Canada + SE + NE
+Type=~Size+Promo + Temp + New+ Texture+Flavor
+Distribution =~Canada + a*SE + a*NE
 Sales~Seasonal+Type+Distribution+Promo+Texture+New
-'
+Flavor~~5.593807*Flavor'
+
 tofu.fit.h<-sem(model=tofu.model.h, data=Tofu)
 summary(tofu.fit.h, standardized=TRUE, fit.measures=TRUE)
-#Model h is a much poorer fit so revert to model  g
 
-########################################################
-#Compare two fitted values
-fitmeasures(tofu.fit.c,c("aic","ecvi"))
-fitmeasures(tofu.fit.d,c("aic","ecvi"))
+#No solution found- 
+modindices(tofu.fit.h)
 
-anova(tofu.model.g,tofu.model.h)- #You can use this code to compare any 2 model fits with ANOVA.
+tofu.model.h<-'Seasonal =~Major_hol + Other_hol + Season
+Type=~Size+Promo + Temp + New+ Texture+Flavor
+Distribution =~Canada + a*SE + a*NE
+Sales~Seasonal+Type+Distribution+Promo+Texture+New
+Flavor~~5.593807*Flavor
+Type~~Seasonal'
+
+tofu.fit.h<-sem(model=tofu.model.h, data=Tofu)
+summary(tofu.fit.h, standardized=TRUE, fit.measures=TRUE)
+
+#H is not an improvement on g so go back and try to improve g
+
+modindices(tofu.fit.g)
+
+#117          New ~~        NE 1523.927  0.011   0.011    0.495    0.495
+#130       Canada ~~     Sales  463.255 -0.062  -0.062   -0.284   -0.284
+#48          Type =~        SE  200.250  8.055   0.930    1.861    1.861
+#157      Texture  ~       New  176.465  0.114   0.114    0.167    0.167
+#113          New ~~   Texture  176.465  0.005   0.005    0.168    0.168
+#160          New  ~   Texture  176.465  0.247   0.247    0.168    0.168
+#132           SE ~~     Sales  175.499 -0.220  -0.220   -1.446   -1.446
+#102        Promo ~~    Canada  150.316 -0.016  -0.016   -0.155   -0.155
+#103        Promo ~~        SE  130.916 -0.015  -0.015   -0.218   -0.218
+#121      Texture ~~        SE  128.549 -0.010  -0.010   -0.218   -0.218
+#153        Promo  ~   Texture  126.473  0.225   0.225    0.142    0.142
+#156      Texture  ~     Promo  126.473  0.089   0.089    0.141    0.141
+#100        Promo ~~   Texture  126.473  0.005   0.005    0.142    0.142
+#120      Texture ~~    Canada  110.087 -0.008  -0.008   -0.133   -0.133
+#143         Type  ~     Promo  107.960  0.191   1.652    0.376    0.376
+#149 Distribution  ~     Promo  104.171  0.029   0.662    0.151    0.151
+#115          New ~~    Canada  103.914 -0.012  -0.012   -0.129   -0.129
+#122      Texture ~~        NE  100.429  0.002   0.002    0.127    0.127
+
+tofu.model.i<-'Seasonal =~Major_hol + Other_hol + Season
+Type=~Size+Promo + Temp + New+ Texture+Flavor
+Distribution =~Canada + SE + NE
+Sales~Seasonal+Type+Distribution
+New~~NE
+Canada~~Sales
+Type=~SE
+Texture~New'
+
+tofu.fit.i<-sem(model=tofu.model.i, data=Tofu)
+summary(tofu.fit.i, standardized=TRUE, fit.measures=TRUE)
+#Model i is now over 9. If we add any more interactions the model does not converge.
+
+######################################################
+##
+#Compare to basic model (no latent structure)
+tofu.base<-'Sales~Major_hol + Other_hol + Season+Size+Promo + Temp + New+ Texture+Flavor+Canada + SE + NE'
+
+tofu.fit.base<-sem(model=tofu.base, data=Tofu)
+anova(tofu.model.i,tofu.base)- #You can use this code to compare any 2 model fits with ANOVA.
 
 #In the model code, #~ shows that a manifest variable is predicting a latent variable. ~~ shows a correlation between variables.
 
