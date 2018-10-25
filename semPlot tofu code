@@ -15,21 +15,6 @@ Tofu$Texture <- Tofu$Texture/10
 
 Tofu$Flavor <- as.numeric(Tofu$Flavor)/10
 
-Tofu$Season <- as.numeric(Tofu$Season)/10
-
-varTable(Tofu)
-
-
-tofu.model.g<-'Seasonal =~Major_hol + Other_hol + Season
-
-Type=~Size+Promo + Temp + New+ Texture+Flavor
-
-Distribution =~Canada + SE + NE
-
-Sales~Seasonal+Type+Distribution
-
-New~~NE
-
 Canada~~Sales'
 
 
@@ -42,9 +27,9 @@ tofu.fit.g<-sem(model=tofu.model.g, data=Tofu)
 tofu.sem<-sem(model=tofu.model.g, data=Tofu)
 summary(tofu.sem, standardized=TRUE, fit.measures=TRUE)
 
-semPaths(tofu.fit.g, rotation = 2, what="stand",groups="latents",
+semPaths(tofu.fit.g, rotation = 2, what="col",groups="latents",
 color = list(lat = c("LightCyan","Honeydew","LightYellow"),int="black"),
-nCharNodes=0, combineGroups=FALSE,nCharEdges=0,sizeMan=12,sizeMan2=6,sizeLat=10,sizeLat2=10,fade=FALSE,edge.color="black",label.cex=0.7,label.norm="OOOOOO")
+nCharNodes=0, thresholds=TRUE,combineGroups=FALSE,edge.label.cex=0.5,nCharEdges=0,sizeMan=12,sizeMan2=6,sizeLat=9,sizeLat2=9,fade=FALSE,edge.color="black",label.cex=0.7,whatLabels="std",label.norm="OOOOOO")
 
 #layout can be tree, tree2, circle, circle2, spring. We are using the default, which is tree.
 
