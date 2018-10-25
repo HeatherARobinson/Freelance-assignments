@@ -47,6 +47,11 @@ rep("grey", 17)))
 scatter(dd1$l1,xax = 1, yax = 2, clab.row = 0.75, clab.col = 1,posieig="none")
 
 plot(dd1$li,color="royalblue")
+dd1$corr
+
+sink(file="TofuComponentCorrelations.txt") 
+dd1$co
+sink(NULL) 
 
 ################################################################################################################################
 library(lavaan)
