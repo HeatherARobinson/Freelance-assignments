@@ -44,7 +44,7 @@ summary(tofu.sem, standardized=TRUE, fit.measures=TRUE)
 
 semPaths(tofu.fit.g, rotation = 2, what="stand",groups="latents",
 color = list(lat = c("LightCyan","Honeydew","LightYellow"),int="black"),
-nCharNodes=0, combineGroups=TRUE,nCharEdges=0,sizeMan=12,sizeMan2=7,sizeLat=14,sizeLat2=14,fade=FALSE,edge.color="black",label.cex=0.75,label.norm="OOOOOO")
+nCharNodes=0, combineGroups=FALSE,nCharEdges=0,sizeMan=12,sizeMan2=6,sizeLat=10,sizeLat2=10,fade=FALSE,edge.color="black",label.cex=0.7,label.norm="OOOOOO")
 
 #layout can be tree, tree2, circle, circle2, spring. We are using the default, which is tree.
 
