@@ -5,26 +5,44 @@ Tofu<-read.csv("Tofu2.csv")
 attach(Tofu)
 varTable(Tofu)
 
-Tofu$Season <- Tofu$Season/10
-Tofu$Texture <- Tofu$Texture/10
-Tofu$Flavor <- as.character(Tofu$Flavor)
+varTable(Tofu)
+
+Tofu$Sales<-as.numeric(Tofu$Sales)/1000
+
 Tofu$Week <- Tofu$Week/100
-Tofu$Size<-Tofu$Size/10
-Tofu$Sales<-as.numeric(Tofu$Sales)/1000000
+
+Tofu$Texture <- Tofu$Texture/10
+
+Tofu$Flavor <- as.numeric(Tofu$Flavor)/10
+
+Tofu$Season <- as.numeric(Tofu$Season)/10
+
+varTable(Tofu)
+
 
 tofu.model.g<-'Seasonal =~Major_hol + Other_hol + Season
+
 Type=~Size+Promo + Temp + New+ Texture+Flavor
+
 Distribution =~Canada + SE + NE
+
 Sales~Seasonal+Type+Distribution
+
 New~~NE
+
 Canada~~Sales'
+
+
+tofu.fit.g<-sem(model=tofu.model.g, data=Tofu)
+
+summary(tofu.fit.g, standardized=TRUE, fit.measures=TRUE)
 
 tofu.fit.g<-sem(model=tofu.model.g, data=Tofu)
 
 tofu.sem<-sem(model=tofu.model.g, data=Tofu)
 summary(tofu.sem, standardized=TRUE, fit.measures=TRUE)
 
-semPaths(tofu.fit.f, rotation = 2, what="stand",groups="latents",
+semPaths(tofu.fit.g, rotation = 2, what="stand",groups="latents",
 color = list(lat = c("LightCyan","Honeydew","LightYellow"),int="black"),
 nCharNodes=0, combineGroups=TRUE,nCharEdges=0,sizeMan=12,sizeMan2=7,sizeLat=14,sizeLat2=14,fade=FALSE,edge.color="black",label.cex=0.75,label.norm="OOOOOO")
 
