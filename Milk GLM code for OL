@@ -31,23 +31,16 @@ anova(GLM1,GLM2,test="Chisq") #Season is the better model
 summary(GLM2)
 
 #We sequentially drop non significant variables (P value over 0.05) with the highest P values then reevaluate the model until only significant variables remain.
-
-GLM3 <- update(GLM2, .~.-Other_hol)
-
-anova(GLM2,GLM3,test="Chisq") #Season is the better model
-
-summary(GLM3)
+#All remaining variables are significant or have a significant interaction term.
 
 #Print coefficients to csv
 
-results_df <-summary.glm(GLM3)$coefficients
+results_df <-summary.glm(GLM2)$coefficients
 write.csv(results_df, file = "MilkCoefficients.csv")
 
 #Confirm relevance of Poisson model (goodness of fit)
 
-
-
-pchisq(summary(GLM3)$deviance,
-           summary(GLM3)$df.residual)
+pchisq(summary(GLM2)$deviance,
+           summary(GLM2)$df.residual)
 
            #Result=1 (a good fit using a Poisson)
