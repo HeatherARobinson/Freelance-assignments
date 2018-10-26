@@ -21,8 +21,9 @@ Milk.fit.i<-sem(model=Milk.model.i, data=Milk)
 summary(Milk.fit.i,standardize=TRUE,fit.measures=TRUE)
 #CFI=0.891
 
-semPaths(Milk.fit.i, rotation = 2, what="stand",color = list(lat = c("LightCyan"),man=c("White","LightCyan","LightCyan","LightCyan","White","White","White","White","White")),edge.color="black",
-nCharNodes=0, nCharEdges=0,sizeMan=14,sizeMan2=7,sizeLat=14,sizeLat2=14,fade=FALSE,label.cex=0.75,label.norm="OOOOOO")
+semPaths(Milk.fit.i, rotation = 2, whatLabels="std",what="path",c
+olor = list(lat = c("LightCyan"),man=c("White","LightCyan","LightCyan","LightCyan","White","White","White","White","White")),edge.color="black",
+nCharNodes=0, nCharEdges=0,sizeMan=14,sizeMan2=7,sizeLat=14,sizeLat2=14,fade=FALSE,label.cex=0.75,label.norm="OOOOOO",reorder=TRUE, minimum=0.1)
 
 #layout can be tree, tree2, circle, circle2, spring. We are using the default, which is tree.
 
