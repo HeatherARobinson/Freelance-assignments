@@ -139,9 +139,9 @@ summary(Milk.fit.j,standardize=TRUE,fit.measures=TRUE)
 #CFI=0.943
 
 #Compare to unstructured model
-Milk.base<-'Sales~Major_hol + Other_hol + Week_year + Week_month+Friday_Shipping+ + Promo + Flavor + Temp + Creamer'
+Milk.base<-'Sales~Major_hol + Other_hol + Week_year + Week_month+Friday_Shipping+ Promo + Flavor + Temp + Creamer'
 Milk.fit.base<-sem(model=Milk.base, data=Milk)
-anova(Milk.base,milk.fit.j)
+anova(Milk.fit.base,Milk.fit.j)
 
 sink(file="MilkSEMOutputs.txt") 
 summary(Milk.fit.j,standardize=TRUE,fit.measures=TRUE)
