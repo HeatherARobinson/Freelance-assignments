@@ -128,6 +128,16 @@ Milk.fit.i<-sem(model=Milk.model.i, data=Milk)
 summary(Milk.fit.i,standardize=TRUE,fit.measures=TRUE)
 #CFI=0.891
 
+modindices(Milk.fit.i,sort=TRUE)
+
+Milk.model.j<-'Seasonal =~Major_hol + Other_hol + Week_year + Week_month
+Sales~ Seasonal+Friday_Shipping+ + Promo + Flavor + Temp + Creamer
+Seasonal~Temp'
+
+Milk.fit.j<-sem(model=Milk.model.j, data=Milk)
+summary(Milk.fit.j,standardize=TRUE,fit.measures=TRUE)
+#CFI=0.943
+
 sink(file="MilkSEMOutputs.txt") 
-summary(Milk.fit.i,standardize=TRUE,fit.measures=TRUE)
+summary(Milk.fit.j,standardize=TRUE,fit.measures=TRUE)
 sink(NULL) 
