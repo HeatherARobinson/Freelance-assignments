@@ -24,9 +24,10 @@ Canada~~Sales
 Type=~SE
 Texture~New'
 
-
 tofu.sem<-sem(model=tofu.model.i, data=Tofu)
 summary(tofu.sem, standardized=TRUE, fit.measures=TRUE)
+summary(tofu.sem, fit.measures=TRUE)
+
 
 semPaths(tofu.sem, rotation = 2, groups="latents",
 color = list(lat = c("LightCyan","Honeydew","LightYellow"),int="black"),
@@ -34,8 +35,6 @@ sizeMan=12,sizeMan2=6,sizeLat=9,sizeLat2=9,fade=FALSE, edge.label.cex=0.6,
 label.cex=0.9,whatLabels="std",label.norm="OOOOOOOO", nCharNodes=0,
 what="path", reorder=TRUE, minimum=0.1
 )
-, edge.color="black",
-nCharEdges=0)
 
 #layout can be tree, tree2, circle, circle2, spring. We are using the default, which is tree.
 
