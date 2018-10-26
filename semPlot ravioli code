@@ -13,6 +13,8 @@ Rav.model.i<-'Sales~Temp +New + Promo + Flavor + Region + Friday_Ship + Private_
 Rav.fit.i<-sem(model=Rav.model.i, data=Rav)
 summary(Rav.fit.i, standardized=TRUE, fit.measures=TRUE)
 
-semPaths(Rav.fit.i, rotation = 2, what="stand",edge.color="black",
-nCharNodes=0, nCharEdges=0,sizeMan=14,sizeMan2=7,sizeLat=14,sizeLat2=14,fade=FALSE,label.cex=0.75,label.norm="OOOOOOO")
+semPaths(Rav.fit.i, rotation = 2, what="path",whatLabels="std",
+nCharNodes=0, nCharEdges=0,sizeMan=12,sizeMan2=6,sizeLat=9,sizeLat2=9,fade=FALSE, edge.label.cex=0.6,
+label.cex=1,label.norm="OOOOOOOO",reorder=TRUE, minimum=0.1
+)
 
