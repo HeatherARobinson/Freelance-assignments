@@ -1,7 +1,21 @@
+a<-read.csv("SSRI1.csv")
+b<-read.csv("SSRI2.csv")
+c<-read.csv("SSRI3.csv")
+d<-read.csv("SSRI4.csv")
+e<-read.csv("SSRI5.csv")
+SSRI<-rbind(a,b)
+SSRI<-rbind(SSRI,c)
+SSRI<-rbind(SSRI,d)
+SSRI<-rbind(SSRI,e)
+summary(SSRI)
+write.csv(SSRI,file="SSRItable.csv")
+
+################################################
+
 input_method <- "csv"
 project_id <- "healthlabs-4"
 database <- "test"
-source_table <- "SSRI"
+source_table <- "SSRItable"
 is.longitudinal<-"F"
 limit <- -1
 var.list <- "patientId,ssriHistory,conditionHistory,matchID"
@@ -199,13 +213,8 @@ regressors <- as.character(subset(var.mat$var.list,var.mat$var.list!= potent.dep
     #Can substitute lmer for clogit if needed
        
   term1 <- paste( regressors[!regressors==mname & !regressors==iname], collapse = '+')  
-print(term1)
   reg.form <- as.formula(paste(potent.dep.name," ~ ", term1, " + ", "strata(", mname, ")", collapse = ''))
-# reg.form <- as.formula(paste(potent.dep.name," ~ ", term1, " + ", "(1|", mname, ")", collapse = ''))
-  print(reg.form)
- # fit.glm<- glmer(reg.form, data = X, family = binomial)
- fit.glm <- clogit(reg.form, data = X, method=c("exact"))
-
+  fit.glm <- clogit(reg.form, data = X, method=c("exact"))
   print(summary(fit.glm))
          }}
       
@@ -215,11 +224,11 @@ print(term1)
     print("Data set is longitudinal. Performing matched logistic regression.")
     term1 <- paste( regressors, collapse = '+')
     reg.form <- paste(potent.dep.name," ~ ", term1, " + (1|", mname, ") + (1|", iname, ")", collapse = '')
-  fit.glm <- clogit(reg.form, data = X)                  
+  fit.glm <- clogit(reg.form, data = X)          
+   print(summary(fit.glm))
+   print(names(fit.glm))
    }
     
-  print(summary(fit.glm))            
-
  output <- data.frame(exp(confint(fit.glm)),exp(coef((fit.glm))), coef(summary(fit.glm)))
  output <- subset(output, select = -c(Estimate, Std..Error, z.value))
  output <- output[-c(1),c("exp.coef..fit.glm...", "X2.5..", "X97.5..", "Pr...z..")]
