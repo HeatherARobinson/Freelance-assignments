@@ -163,39 +163,40 @@ print("Bigdata data retrieved. Analysis begins.")
   ##########################################################
     
 #This section is slow due to all the for loops
-   mname = NA
-  iname = NA
-  fname = NA
-
-  for(i in 1:nrow(var.mat)){
-    if(var.mat$data.nature[i] == "M"){  
-      mname <-   as.character(var.mat$var.list[i])
-          for(i in 1:ncol(X)){
-        if(colnames(X[i]) == mname){
-          matchid <- X[,i]
-          matched <- T  
-          print(mname)}
-      } #Acts as an indication if data is matched when feeding into the reg loop
-    }
-    else if(var.mat$data.nature[i] == "I"){  
-      iname <-  as.character(var.mat$var.list[i])}
-   
-    else if(var.mat$data.nature[i] == "F"){
-      #  vars marked as factor/categorical
-      fname <-  as.character(var.mat$var.list[i])
-      for(i in 1:ncol(X)){
-        if(colnames(X[i]) == fname){
-          X[,i] <- as.factor(X[,i])}
-      }
- }  }        
-    
-regressors <- as.character(subset(var.mat$var.list,var.mat$var.list!= potent.dep.name))
-           
+    mname = NA
+   iname = NA
+   fname = NA
+   yname = NA
  
-  for(i in 1:ncol(X)){
-    if(is.character(X[,i]) == T){
-      X[,i] <- as.factor(X[,i])}
-   
+   for(i in 1:nrow(var.mat)){
+     if(var.mat$data.nature[i] == "M"){  
+       mname <-   as.character(var.mat$var.list[i])
+           for(i in 1:ncol(X)){
+         if(colnames(X[i]) == mname){
+           matchid <- X[,i]
+           matched <- T  
+           print(mname)}
+       } #Acts as an indication if data is matched when feeding into the reg loop
+     }
+     else if(var.mat$data.nature[i] == "I"){  
+       iname <-  as.character(var.mat$var.list[i])}
+    
+     else if(var.mat$data.nature[i] == "F"){
+       #  vars marked as factor/categorical
+       fname <-  as.character(var.mat$var.list[i])
+       for(i in 1:ncol(X)){
+         if(colnames(X[i]) == fname){
+           X[,i] <- as.factor(X[,i])}
+       }
+  }  }        
+     
+ regressors <- as.character(subset(var.mat$var.list,var.mat$var.list!= potent.dep.name))
+            
+  
+   for(i in 1:ncol(X)){
+     if(is.character(X[,i]) == T){
+       X[,i] <- as.factor(X[,i])}
+    
   } 
            
    #Non longitudinal options
@@ -215,7 +216,20 @@ regressors <- as.character(subset(var.mat$var.list,var.mat$var.list!= potent.dep
   term1 <- paste( regressors[!regressors==mname & !regressors==iname], collapse = '+')  
   reg.form <- as.formula(paste(potent.dep.name," ~ ", term1, " + ", "strata(", mname, ")", collapse = ''))
   fit.glm <- clogit(reg.form, data = X, method=c("exact"))
+  Fit.res <- residuals(fit.glm)
+    
+    if(dim(X)[1] != length(Fit.res)){
+      print("One of your regressor vars has missing values, which are deleted by default by clogit(). Output will not print correctly.")
+    }
+    
+    X.merge <- cbind(X, Fit.res)
+    fit.aic <- AIC(fit.glm)
+    fit.bic <- BIC(fit.glm)
+    
+    X.out  <- list(outcome = yname, modelform = reg.form,model = fit.glm, OutlierData = X.merge,
+                   AIC = fit.aic, BIC = fit.bic)
   print(summary(fit.glm))
+  head(X.out)
          }}
       
 # options for longitudinal data will need rewriting if later needed- need an alternative to survival? maybe epitools?
