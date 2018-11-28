@@ -5,7 +5,7 @@ source_table <- "SSRI"
 is.longitudinal<-"F"
 limit <- -1
 var.list <- "patientId,ssriHistory,conditionHistory,matchID"
-data.nature <-"F,B,B,M" 
+data.nature <-"I,B,B,M" 
 potent.dep.name<- "conditionHistory" 
 output_method <- "csv"
 destination_dataset <- "test"
@@ -125,8 +125,7 @@ print("Bigdata data retrieved. Analysis begins.")
     #reference index for cycling through potentially correlated variables
       
   potent.dep <- c(var.list==potent.dep.name)
-  var.mat <- data.frame(var.list, data.nature, potent.dep)
-   
+  var.mat <- data.frame(var.list, data.nature, potent.dep)   
     
    ######################################################### 
     #The next section is from logit_local
@@ -160,16 +159,13 @@ print("Bigdata data retrieved. Analysis begins.")
           for(i in 1:ncol(X)){
         if(colnames(X[i]) == mname){
           matchid <- X[,i]
-          matched <- T  }
+          matched <- T  
+          print(mname)}
       } #Acts as an indication if data is matched when feeding into the reg loop
     }
-    else if(var.mat$data.nature[i] == "I"){  #This is to find the id
-      iname <-  as.character(var.mat$var.list[i])
-      for(i in 1:ncol(X)){
-        if(colnames(X[i]) == iname){
-          ID <- X[,i]               }
-      }
-    }
+    else if(var.mat$data.nature[i] == "I"){  
+      iname <-  as.character(var.mat$var.list[i])}
+   
     else if(var.mat$data.nature[i] == "F"){
       #  vars marked as factor/categorical
       fname <-  as.character(var.mat$var.list[i])
@@ -177,8 +173,7 @@ print("Bigdata data retrieved. Analysis begins.")
         if(colnames(X[i]) == fname){
           X[,i] <- as.factor(X[,i])}
       }
-    }
- }          
+ }  }        
     
 regressors <- as.character(subset(var.mat$var.list,var.mat$var.list!= potent.dep.name))
            
@@ -196,20 +191,20 @@ regressors <- as.character(subset(var.mat$var.list,var.mat$var.list!= potent.dep
     print("Data is not matched. Performing an unmatched logistic regression")
     term1 <- paste( regressors, collapse = '+')   
     reg.form <-as.formula(paste(potent.dep.name," ~ ", term1, collapse = ''))
-  fit.glm<- glm(reg.form, data = X, family = binomial)
+    fit.glm<- glm(reg.form, data = X, family = binomial)
      }
       
     if(is.na(mname)==F ){ #if matched but non longitudinal
     print("Performing matched logistic regression. Data set is cross-sectional.")
-    #Can substitute lmer for clogit 
+    #Can substitute lmer for clogit if needed
        
-  term1 <- paste( regressors[!regressors==mname], collapse = '+')  
+  term1 <- paste( regressors[!regressors==mname & !regressors==iname], collapse = '+')  
 print(term1)
-  reg.form <- as.formula(paste(potent.dep.name," ~ ", term1, " + ", "strata(", mname, ")", collapse = ''))
+  reg.form <- as.formula(paste(potent.dep.name," ~ ", term1, " + ", "strata(", mname, ")+strata(", iname, ")", collapse = ''))
 # reg.form <- as.formula(paste(potent.dep.name," ~ ", term1, " + ", "(1|", mname, ")", collapse = ''))
   print(reg.form)
  # fit.glm<- glmer(reg.form, data = X, family = binomial)
- fit.glm <- clogit(reg.form, data = X, family = binomial,link = logit)
+ fit.glm <- clogit(reg.form, data = X, family = binomial(link=logit))
 
   print(summary(fit.glm))
          }}
