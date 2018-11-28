@@ -178,10 +178,10 @@ print("Bigdata data retrieved. Analysis begins.")
           X[,i] <- as.factor(X[,i])}
       }
     }
-             
+ }          
     
 regressors <- as.character(subset(var.mat$var.list,var.mat$var.list!= potent.dep.name))
-            }
+           
  
   for(i in 1:ncol(X)){
     if(is.character(X[,i]) == T){
@@ -204,14 +204,15 @@ regressors <- as.character(subset(var.mat$var.list,var.mat$var.list!= potent.dep
     #Can substitute lmer for clogit 
        
   term1 <- paste( regressors[!regressors==mname], collapse = '+')  
-  reg.form <- as.formula(paste(c(potent.dep.name," ~ ", term1, " + ", "strata(", mname, ")" collapse = ''))
-   # reg.form <- as.formula(paste(potent.dep.name," ~ ", term1, " + ", "(1|", mname, ")", collapse = ''))
+print(term1)
+  reg.form <- as.formula(paste(potent.dep.name," ~ ", term1, " + ", "strata(", mname, ")", collapse = ''))
+# reg.form <- as.formula(paste(potent.dep.name," ~ ", term1, " + ", "(1|", mname, ")", collapse = ''))
   print(reg.form)
  # fit.glm<- glmer(reg.form, data = X, family = binomial)
- fit.glm <- clogit(reg.form, data = X, family = binomial(link = logit))}
+ fit.glm <- clogit(reg.form, data = X, family = binomial,link = logit)
 
   print(summary(fit.glm))
-         }}  
+         }}
       
 # options for longitudinal data will need rewriting if later needed- need an alternative to survival? maybe epitools?
                         
@@ -285,10 +286,9 @@ regressors <- as.character(subset(var.mat$var.list,var.mat$var.list!= potent.dep
     index <- vec_for_refcol[i]
     cc[index,1] <- as.character(ref.level.names[i])
     cc[index,6] <- 1
-     
-  }
-
-} 
+    
+      }
+} #CLOSE FUNCTION
 
 logit_2(            is.longitudinal,
                     potent.dep.name,
