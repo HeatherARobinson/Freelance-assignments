@@ -239,9 +239,9 @@ print("Bigdata data retrieved. Analysis begins.")
   
  output <- data.frame(exp(confint(fit.glm)),exp(coef((fit.glm))), coef(summary(fit.glm)))
  print(output)
-output <- output[-c(1),c("exp.coef..fit.glm...", "X2.5..", "X97.5..", "Pr...z..")]
+ output <- output[,c("exp.coef..fit.glm...", "X2.5..", "X97.5..", "Pr...z..")]
+ print(output)
  names(output) <- c('odds_ratio','CI_L','CI_U','p_val')
- print(head(output))
           }}
       
 # options for longitudinal data will need rewriting if later needed- need an alternative to survival? maybe epitools?
@@ -260,9 +260,7 @@ output <- output[-c(1),c("exp.coef..fit.glm...", "X2.5..", "X97.5..", "Pr...z.."
  names(output) <- c('odds_ratio','CI_L','CI_U','p_val')
  print(head(output))
    }
-    
- 
-    
+     
 #remove the intercept for the notebook table
   output <- output[-c(1),]
   
