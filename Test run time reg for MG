@@ -1,0 +1,284 @@
+input_method <- "csv"
+project_id <- "healthlabs-4"
+database <- "test"
+source_table <- "SSRI"
+is.longitudinal<-"F"
+limit <- -1
+var.list <- "patientId,ssriHistory,conditionHistory,matchID"
+data.nature <-"F,B,B,M" 
+potent.dep.name<- "conditionHistory" 
+output_method <- "csv"
+destination_dataset <- "test"
+destination_table <- "test"
+delete_missing <- "F"
+erase_table <- "T"
+library(stringr)
+library(tidyr)
+library(lme4)
+
+logit_2 <- function(is.longitudinal,
+                    potent.dep.name,
+                    destination_dataset,
+                      project_id,
+                   database,
+                   source_table,
+                   limit,
+                   var.list,
+                   data.nature,
+                    input_method,
+                    output_method
+                    # choose.level
+                    # ref.level
+                   ){
+    
+  var.list <-str_replace_all(string=var.list, pattern=" ", repl="")
+  var.list <-str_replace_all(string=var.list, pattern="[\r\n]", repl="")
+  var.list <- c(unlist(strsplit(var.list, "[,]")))
+    
+  data.nature <-str_replace_all(string=data.nature, pattern=" ", repl="")
+  data.nature <-str_replace_all(string=data.nature, pattern="[\r\n]", repl="")
+  data.nature <- c(unlist(strsplit(data.nature, "[,]")))    
+    
+if(input_method == "bigquery"){ 
+     
+print("Checking for destination dataset") #This section the same in both scripts
+ 
+  if (!(destination_dataset %in% list_datasets(project_id)))
+  {    insert_dataset(project_id, destination_dataset)
+  }
+     
+ print("Checking for destination table")    
+ if (destination_table %in% list_tables(project_id, destination_dataset))
+ {
+   if (erase_table){        
+   delete_table(project_id, destination_dataset, destination_table) 
+  }  else   {
+  return('The table already exists')
+ }
+}
+      
+c <- unique(c(var.list, potent.dep.name))
+query_cols  <- paste(c, sep='',collapse=",")
+cols_list <- strsplit(query_cols, ",")[[1]] #at this stage this also includes the response
+       
+print("Creating the SQL string")
+    
+  if  (delete_missing){
+ where_str <- ''
+ for (i in 1:length(cols_list)){
+ if (i==length(cols_list)){
+  where_str <- paste(where_str, cols_list[i], 'IS NOT NULL')
+ } else {
+   where_str <- paste(where_str, cols_list[i], 'IS NOT NULL AND')
+  }
+ }
+      
+ if (limit == -1){
+  sql <- paste( "SELECT ",query_cols," FROM [", project_id, ":", database, ".", source_table, "] WHERE ", where_str,sep='')
+  } else {
+   sql <- paste( "SELECT ",query_cols," FROM [", project_id, ":", database, ".", source_table, "] WHERE ", where_str," LIMIT ", limit,sep='')
+ }
+      
+  } else {
+  if (limit == -1){
+     sql <- paste( "SELECT ",query_cols," FROM [", project_id, ":", database, ".", source_table, "]",sep='')
+ } else {
+    sql <- paste( "SELECT ",query_cols," FROM [", project_id, ":", database, ".", source_table, "] LIMIT ", limit,sep='')
+  }
+ }
+    
+    ####################
+print("Performing the SQL query")
+
+sql_check <- paste("SELECT ",query_cols," FROM [", project_id, ":", database, ".", source_table, "] LIMIT 1", sep ='')
+X_check <- query_exec(sql_check, project = project_id)
+    
+  for (i in 1:length(cols_list)){
+  if (!cols_list[i] %in% names(X_check)){
+  print(paste('Column ', cols_list[i], ' does not exist in the data set', sep=''))
+   return(-1)
+}  
+}
+    
+  tryCatch(X <- query_exec(sql, project = project_id, max_pages = Inf),
+         warning = function(w)
+       {
+       print("warning at data retrieval stage")
+                  },
+      error = function(e) {print("error at data retrieval stage")
+      return(-1)
+  })
+print("Data retrieved. Analysis begins.")
+        
+    
+  }else 
+    if(input_method == "csv"){
+    X <- read.csv(paste0(source_table,".csv")) 
+      print("Retrieval from csv complete. Analysis begins.")
+  } else {
+    print("error importing data. please specify 'bigquery' or 'csv' as your input_method")
+  }
+    
+    ####### define potent.dep variable #######
+    #reference index for cycling through potentially correlated variables
+      
+  potent.dep <- c(var.list==potent.dep.name)
+  var.mat <- data.frame(var.list, data.nature, potent.dep)
+   
+    
+   ######################################################### 
+    #The next section is from logit_local
+    #an extra column is added to var.mat to isolate variable names of factors only (NA if !data.nature=="F").
+    #This is to enable level replacement e.g. defaults to replace NAs.
+      
+ ref.level.names <- vector()
+   j <- 1
+  for(i in 1:nrow(var.mat)){
+    if(var.mat$data.nature[i] == "F"){
+                  X[,var.list[i]] <- as.factor(X[,var.list[i]]) #make sure all factors are designated as factors
+        ref.level.names[i] <- levels(X[,var.list[i]])[1]
+        
+          }else{
+      ref.level.names[i] <- NA 
+    }
+  }
+      
+    var.mat <- data.frame(var.mat, ref.level.names)
+
+  ##########################################################
+    
+#This section is slow due to all the for loops
+   mname = NA
+  iname = NA
+  fname = NA
+
+  for(i in 1:nrow(var.mat)){
+    if(var.mat$data.nature[i] == "M"){  
+      mname <-   as.character(var.mat$var.list[i])
+          for(i in 1:ncol(X)){
+        if(colnames(X[i]) == mname){
+          matchid <- X[,i]
+          matched <- T  }
+      } #Acts as an indication if data is matched when feeding into the reg loop
+    }
+    else if(var.mat$data.nature[i] == "I"){  #This is to find the id
+      iname <-  as.character(var.mat$var.list[i])
+      for(i in 1:ncol(X)){
+        if(colnames(X[i]) == iname){
+          ID <- X[,i]               }
+      }
+    }
+    else if(var.mat$data.nature[i] == "F"){
+      #  vars marked as factor/categorical
+      fname <-  as.character(var.mat$var.list[i])
+      for(i in 1:ncol(X)){
+        if(colnames(X[i]) == fname){
+          X[,i] <- as.factor(X[,i])}
+      }
+    }
+             
+    
+regressors <- as.character(subset(var.mat$var.list,var.mat$var.list != potent.dep.name))
+            }
+ 
+  for(i in 1:ncol(X)){
+    if(is.character(X[,i]) == T){
+      X[,i] <- as.factor(X[,i])}
+   
+  } 
+           
+   #Non longitudinal options
+    if(is.longitudinal == "F"){  
+           
+    if(is.na(mname)==T){ #If unmatched 
+    print("Data is not matched. Performing an unmatched logistic regression")
+    term1 <- paste( regressors, collapse = '+')   
+    reg.form <-as.formula(paste(potent.dep.name," ~ ", term1, collapse = ''))
+    fit.glm<- glm(reg.form, data = X, family = binomial)
+     }
+      
+    if(is.na(mname)==F ){ #if matched but non longitudinal
+    print("Performing matched logistic regression. Data set is cross-sectional.")
+    #I have substituted lmer for clogit as it makes more sense in this context
+       
+   term1 <- paste( regressors[!regressors==mname], collapse = '+')  
+   reg.form <- as.formula(paste(potent.dep.name," ~ ", term1, " + ", "(1|", mname, ")", collapse = ''))
+   fit.glm<- glmer(reg.form, data = X, family = binomial)
+         }}  
+      
+# options for longitudinal data will need rewriting if later needed- need an alternative to survival? maybe epitools?
+                        
+    if(is.longitudinal == "T"){
+    print("Data set is longitudinal. Performing matched logistic regression.")
+    term1 <- paste( regressors, collapse = '+')
+    reg.form <- paste(potent.dep.name," ~ ", term1, " + (1|", mname, ") + (1|", iname, ")", collapse = '')
+         #  fit.glm <- #TBA                      
+   }
+    
+  print(summary(fit.glm))            
+
+ output <- data.frame(exp(confint(fit.glm)),exp(coef((fit.glm))), coef(summary(fit.glm)))
+ output <- subset(output, select = -c(Estimate, Std..Error, z.value))
+ output <- output[-c(1),c("exp.coef..fit.glm...", "X2.5..", "X97.5..", "Pr...z..")]
+ names(output) <- c('odds_ratio','CI_L','CI_U','p_val')
+ print(head(output))
+    
+#remove the intercept for the notebook table
+  output <- output[-c(1),]
+  
+ vec_for_refcol <- vector()
+  j <- 1
+  l <- 1
+  
+  for(i in 1:nrow(var.mat)){
+    if (var.mat$data.nature[i] == "F"){
+        reference <- c(1.0, NA, NA, NA)
+      if(i == 1) {
+        output <- rbind(reference, output) 
+        vec_for_refcol[i] <- l
+        var.name <- as.character(var.mat$var.list[i])
+        j <- j + (nlevels(X[,var.name]) -1)
+        l <- l + nlevels(X[,var.name])
+      }else if (i != 1){
+        output <- rbind(output[1:j,], reference, output[(j+1):nrow(output),])
+        vec_for_refcol[i] <- l
+        var.name <- as.character(var.mat$var.list[i])
+        j <- j + nlevels(X[,var.name])
+        l <- l + nlevels(X[,var.name])
+      }
+    }else{
+      j <- j + 1
+      l <- l + 1
+    }
+  }
+  
+  #get the rownames
+  vars <- rownames(output)
+  #trim off the varnames
+ #FOR NOW THIS ONLY WORKS FOR ONE FACTOR VARIABLE. THIS WILL HAVE TO CHANGE IN THE FUTURE
+  trim_name <- sapply(var.mat$var.list[var.mat$data.nature=="F"], as.character)
+  
+  for(i in seq_along(trim_name)){
+    vars <- str_replace(vars, trim_name[i], "")
+    #print(i)
+  }
+  
+  cc <- cbind(vars, output)
+  rownames(cc) <- NULL
+  # reference <- as.numeric(reference[2])
+  ref_column <- rep(0, times=nrow(cc))
+  
+  cc <- cbind(cc, ref_column)
+  cc$vars <- as.character(cc$vars)
+  
+  ref.level.names <- ref.level.names[!is.na(ref.level.names)]
+    #this would drop any continuous variables- check not using any
+  
+  for(i in seq_along(vec_for_refcol)){
+    index <- vec_for_refcol[i]
+    cc[index,1] <- as.character(ref.level.names[i])
+    cc[index,6] <- 1
+     
+  }
+
+} 
