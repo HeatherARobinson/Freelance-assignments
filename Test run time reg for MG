@@ -207,6 +207,12 @@ print("Bigdata data retrieved. Analysis begins.")
     term1 <- paste( regressors, collapse = '+')   
     reg.form <-as.formula(paste(potent.dep.name," ~ ", term1, collapse = ''))
     fit.glm<- glm(reg.form, data = X, family = binomial)
+    
+ output <- data.frame(exp(confint(fit.glm)),exp(coef((fit.glm))), coef(summary(fit.glm)))
+ output <- subset(output, select = -c(Estimate, Std..Error, z.value))
+ output <- output[-c(1),c("exp.coef..fit.glm...", "X2.5..", "X97.5..", "Pr...z..")]
+ names(output) <- c('odds_ratio','CI_L','CI_U','p_val')
+ print(head(output))
      }
       
     if(is.na(mname)==F ){ #if matched but non longitudinal
@@ -229,8 +235,14 @@ print("Bigdata data retrieved. Analysis begins.")
     X.out  <- list(outcome = yname, modelform = reg.form,model = fit.glm, OutlierData = X.merge,
                    AIC = fit.aic, BIC = fit.bic)
   print(summary(fit.glm))
-  head(X.out)
-         }}
+  print(names(X.out))
+  
+ output <- data.frame(exp(confint(fit.glm)),exp(coef((fit.glm))), coef(summary(fit.glm)))
+ print(output)
+output <- output[-c(1),c("exp.coef..fit.glm...", "X2.5..", "X97.5..", "Pr...z..")]
+ names(output) <- c('odds_ratio','CI_L','CI_U','p_val')
+ print(head(output))
+          }}
       
 # options for longitudinal data will need rewriting if later needed- need an alternative to survival? maybe epitools?
                         
@@ -241,13 +253,15 @@ print("Bigdata data retrieved. Analysis begins.")
   fit.glm <- clogit(reg.form, data = X)          
    print(summary(fit.glm))
    print(names(fit.glm))
-   }
-    
+   
  output <- data.frame(exp(confint(fit.glm)),exp(coef((fit.glm))), coef(summary(fit.glm)))
  output <- subset(output, select = -c(Estimate, Std..Error, z.value))
  output <- output[-c(1),c("exp.coef..fit.glm...", "X2.5..", "X97.5..", "Pr...z..")]
  names(output) <- c('odds_ratio','CI_L','CI_U','p_val')
  print(head(output))
+   }
+    
+ 
     
 #remove the intercept for the notebook table
   output <- output[-c(1),]
@@ -308,6 +322,7 @@ print("Bigdata data retrieved. Analysis begins.")
       }
 } #CLOSE FUNCTION
 
+start_time <- Sys.time()
 logit_2(            is.longitudinal,
                     potent.dep.name,
                     destination_dataset,
@@ -319,3 +334,6 @@ logit_2(            is.longitudinal,
                    data.nature,
                     input_method,
                     output_method)
+ end_time <- Sys.time()
+ end_time-start_time
+
