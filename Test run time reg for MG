@@ -15,6 +15,7 @@ erase_table <- "T"
 library(stringr)
 library(tidyr)
 library(lme4)
+library(survival)
 
 logit_2 <- function(is.longitudinal,
                     potent.dep.name,
@@ -50,7 +51,8 @@ print("Checking for destination dataset") #This section the same in both scripts
  print("Checking for destination table")    
  if (destination_table %in% list_tables(project_id, destination_dataset))
  {
-   if (erase_table){        
+   if (erase_table)
+   {        
    delete_table(project_id, destination_dataset, destination_table) 
   }  else   {
   return('The table already exists')
@@ -108,7 +110,7 @@ X_check <- query_exec(sql_check, project = project_id)
       error = function(e) {print("error at data retrieval stage")
       return(-1)
   })
-print("Data retrieved. Analysis begins.")
+print("Bigdata data retrieved. Analysis begins.")
         
     
   }else 
@@ -178,7 +180,7 @@ print("Data retrieved. Analysis begins.")
     }
              
     
-regressors <- as.character(subset(var.mat$var.list,var.mat$var.list != potent.dep.name))
+regressors <- as.character(subset(var.mat$var.list,var.mat$var.list!= potent.dep.name))
             }
  
   for(i in 1:ncol(X)){
@@ -194,16 +196,21 @@ regressors <- as.character(subset(var.mat$var.list,var.mat$var.list != potent.de
     print("Data is not matched. Performing an unmatched logistic regression")
     term1 <- paste( regressors, collapse = '+')   
     reg.form <-as.formula(paste(potent.dep.name," ~ ", term1, collapse = ''))
-    fit.glm<- glm(reg.form, data = X, family = binomial)
+  fit.glm<- glm(reg.form, data = X, family = binomial)
      }
       
     if(is.na(mname)==F ){ #if matched but non longitudinal
     print("Performing matched logistic regression. Data set is cross-sectional.")
-    #I have substituted lmer for clogit as it makes more sense in this context
+    #Can substitute lmer for clogit 
        
-   term1 <- paste( regressors[!regressors==mname], collapse = '+')  
-   reg.form <- as.formula(paste(potent.dep.name," ~ ", term1, " + ", "(1|", mname, ")", collapse = ''))
-   fit.glm<- glmer(reg.form, data = X, family = binomial)
+  term1 <- paste( regressors[!regressors==mname], collapse = '+')  
+  reg.form <- as.formula(paste(c(potent.dep.name," ~ ", term1, " + ", "strata(", mname, ")" collapse = ''))
+   # reg.form <- as.formula(paste(potent.dep.name," ~ ", term1, " + ", "(1|", mname, ")", collapse = ''))
+  print(reg.form)
+ # fit.glm<- glmer(reg.form, data = X, family = binomial)
+ fit.glm <- clogit(reg.form, data = X, family = binomial(link = logit))}
+
+  print(summary(fit.glm))
          }}  
       
 # options for longitudinal data will need rewriting if later needed- need an alternative to survival? maybe epitools?
