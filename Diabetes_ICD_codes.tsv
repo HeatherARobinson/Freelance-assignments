@@ -1,0 +1,121 @@
+Code	Release	Disease type	Caveat
+E10.1X	ICD10	Type I	With the presence of diabetic ketoacidosis
+ E10.10	ICD10	Type I	With diabetic ketoacidosis without coma
+ E10.11	ICD10	Type I	With diabetic ketoacidosis with coma
+E10.2X	ICD10	Type I	With renal disease
+ E10.21	ICD10	Type I	With diabetic nephropathy
+ E10.22	ICD10	Type I	With diabetic chronic kidney disease
+ E10.29	ICD10	Type I	With other diabetic kidney
+E10.3X	ICD10	Type I	With eye disease
+ E10.311	ICD10	Type I	With ophthalmic complications without macular edema
+ E10.319	ICD10	Type I	With ophthalmic complications with macular edema
+ E10.321	ICD10	Type I	With mild nonproliferative diabetic retinopathy with macular edema
+ E10.329	ICD10	Type I	With mild nonproliferative diabetic retinopathy without macular edema
+ E10.331	ICD10	Type I	With macular edema
+ E10.339	ICD10	Type I	Without macular edema
+ E10.341	ICD10	Type I	With severe nonproliferative diabetic retinopathy with macular edema
+ E10.349	ICD10	Type I	With severe nonproliferative diabetic retinopathy without macular edema
+ E10.351	ICD10	Type I	With proliferative diabetic retinopathy with macular edema
+ E10.359	ICD10	Type I	With proliferative diabetic retinopathy without macular edema
+ E10.36	ICD10	Type I	With diabetic cataract
+ E10.39	ICD10	Type I	With other diabetic ophthalmic complication
+E10.4X	ICD10	Type I	With nerve disease
+ E10.40	ICD10	Type I	"With diabetic neuropathy, unspecified"
+ E10.41	ICD10	Type I	With diabetic mononeuropathy
+ E10.42	ICD10	Type I	With diabetic polyneuropathy
+ E10.43	ICD10	Type I	With diabetic autonomic (poly)neuropathy
+ E10.44	ICD10	Type I	With diabetic amyotrophy
+ E10.49	ICD10	Type I	With other diabetic neurological complication
+E10.5X	ICD10	Type I	With peripheral vascular disease
+ E10.51	ICD10	Type I	With diabetic peripheral angiopathy without gangrene
+ E10.52	ICD10	Type I	With diabetic peripheral angiopathy with gangrene
+ E10.59	ICD10	Type I	With other circulatory complications
+E10.6X	ICD10	Type I	"With diabetes-related musculoskeletal, oral, or skin complications; hypoglycemia; or hyperglycemia"
+ E10.61	ICD10	Type I	With diabetic arthropathy
+ E10.610	ICD10	Type I	With diabetic neuropathic arthropathy
+ E10.618	ICD10	Type I	With other diabetic arthropathy
+ E10.620	ICD10	Type I	With diabetic dermatitis
+ E10.621	ICD10	Type I	With foot ulcer
+ E10.622	ICD10	Type I	With other skin ulcer
+ E10.628	ICD10	Type I	With other skin complications
+ E10.630	ICD10	Type I	With periodontal disease
+ E10.638	ICD10	Type I	With other oral complications
+ E10.641	ICD10	Type I	With hypoglycemia with coma
+ E10.649	ICD10	Type I	With hypoglycemia without coma or with hypoglycemia unawareness
+ E10.65	ICD10	Type I	With hyperglycemia
+ E10.69	ICD10	Type I	With other specified complication
+E10.8	ICD10	Type I	"With complications, unspecified"
+E10.9	ICD10	Type I	Without complications
+E11.0X	ICD10	Type 2	With hyperosmolarity
+ E11.00	ICD10	Type 2	Without nonketotic hyperglycemic hyperosmolar coma
+ E11.01	ICD10	Type 2	With nonketotic hyperglycemic hyperosmolar coma
+E11.2X	ICD10	Type 2	With kidney complications
+ E11.21	ICD10	Type 2	With diabetic nephropathy
+ E11.22	ICD10	Type 2	With diabetic chronic kidney disease
+ E11.29	ICD10	Type 2	With other diabetic kidney complications
+E11.3X	ICD10	Type 2	With eye complications
+ E11.31	ICD10	Type 2	"With diabetic retinopathy, unspecified"
+ E11.311	ICD10	Type 2	With diabetic retinopathy with macular edema
+ E11.319	ICD10	Type 2	With diabetic retinopathy without macular edema
+ E11.32	ICD10	Type 2	With mild nonproliferative diabetic retinopathy`
+ E11.321	ICD10	Type 2	With mild nonproliferative diabetic retinopathy with macular edema
+ E11.329	ICD10	Type 2	With mild nonproliferative diabetic retinopathy without macular edema
+ E11.33	ICD10	Type 2	With moderate nonproliferative diabetic retinopathy
+ E11.331	ICD10	Type 2	With moderate nonproliferative diabetic retinopathy with macular edema
+ E11.339	ICD10	Type 2	With moderate nonproliferative diabetic retinopathy without macular edema
+ E11.34	ICD10	Type 2	With severe nonproliferative diabetic retinopathy
+ E11.341	ICD10	Type 2	With severe nonproliferative diabetic retinopathy with macular edema
+ E11.349	ICD10	Type 2	With severe nonproliferative diabetic retinopathy without macular edema
+ E11.36	ICD10	Type 2	With diabetic cataract
+ E11.39	ICD10	Type 2	With other diabetic ophthalmic complication
+E11.4X	ICD10	Type 2	With nerve complications
+ E11.40	ICD10	Type 2	"With diabetic neuropathy, unspecified"
+ E11.41	ICD10	Type 2	With mononeuropathy
+ E11.42	ICD10	Type 2	With diabetic polyneuropathy
+ E11.45	ICD10	Type 2	"With autonomic neuropathy (e.g., gastroparesis)"
+ E11.49	ICD10	Type 2	With other diabetic neurological complications
+E11.5X	ICD10	Type 2	With peripheral vascular disease
+ E11.51	ICD10	Type 2	With diabetic peripheral angiopathy without gangrene
+ E11.52	ICD10	Type 2	With diabetic peripheral angiopathy with gangrene
+ E11.59	ICD10	Type 2	With other circulatory complications
+ E11.6X	ICD10	Type 2	"With diabetes-related musculoskeletal, oral, or skin complications; hypoglycemia; or hyperglycemia"
+ E11.61	ICD10	Type 2	With diabetic arthropathy
+ E11.610	ICD10	Type 2	With diabetic neuropathic arthropathy
+ E11.618	ICD10	Type 2	With other diabetic arthropathy
+ E11.62	ICD10	Type 2	With skin complications
+ E11.620	ICD10	Type 2	With diabetic dermatitis
+ E11.621	ICD10	Type 2	With foot ulcer
+ E11.622	ICD10	Type 2	With other skin ulcer
+ E11.628	ICD10	Type 2	With other skin complications
+ E11.63	ICD10	Type 2	With oral complications
+ E11.630	ICD10	Type 2	With periodontal disease
+ E11.638	ICD10	Type 2	With other oral complications
+ E11.64	ICD10	Type 2	With hypoglycemia
+ E11.641	ICD10	Type 2	With hypoglycemia with coma
+ Ell.649	ICD10	Type 2	Without hypoglycemia without coma
+ E11.65	ICD10	Type 2	With hyperglycemia
+ E11.69	ICD10	Type 2	With other complications
+E11.8X	ICD10	Type 2	With other unspecified complication
+E11.9X	ICD10	Type 2	"Well controlled without hyperglycemia, hypoglycemia, or complications"
+E10.649	ICD10	Type 1	Type 1 diabetes with hypoglycemia without coma
+E11.649	ICD10	Type 2	Type 2 diabetes with hypoglycemia without coma
+E08.64	ICD10	Other	Diabetes due to underlying condition with hypoglycemia
+E09.64	ICD10	Other	Drug- or chemical-induced diabetes with hypoglycemia
+E16.0	ICD10	Other	Drug-induced hypoglycemia without coma
+E16.1	ICD10	Other	Other hypoglycemia
+E16.2	ICD10	Other	"Hypoglycemia, unspecified"
+EXX.641	ICD10	Other	Fill in with code for type of diabetes with hypoglycemia and coma
+250.0x	ICD9	Other	Diabetes mellitus without mention of complications
+250.1x	ICD9	Other	Diabetes with ketoacidosis
+250.2x	ICD9	Other	Diabetes with hyperosmolarity
+250.3x	ICD9	Other	Diabetes with other coma
+250.4x	ICD9	Other	Diabetes with renal manifestations
+250.5x	ICD9	Other	Diabetes with ophthalmic manifestations
+250.6x	ICD9	Other	Diabetes with neurological manifestation
+250.7x	ICD9	Other	Diabetes with peripheral circulatory disorders
+250.8x	ICD9	Other	Diabetes with other specified manifestations
+250.9x	ICD9	Other	Diabetes with unspecified complications
+250.x0	ICD9	Other	Diabetes – not stated as uncontrolled
+250.x1	ICD9	Other	Diabetes – not stated as uncontrolled
+250.x2	ICD9	Other	Diabetes – uncontrolled
+250.x3	ICD9	Other	Diabetes – uncontrolled
