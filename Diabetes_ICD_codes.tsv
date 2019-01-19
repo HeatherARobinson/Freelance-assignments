@@ -105,17 +105,17 @@ E16.0	ICD10	Other	Drug-induced hypoglycemia without coma
 E16.1	ICD10	Other	Other hypoglycemia
 E16.2	ICD10	Other	"Hypoglycemia, unspecified"
 EXX.641	ICD10	Other	Fill in with code for type of diabetes with hypoglycemia and coma
-250.0x	ICD9	Other	Diabetes mellitus without mention of complications
-250.1x	ICD9	Other	Diabetes with ketoacidosis
-250.2x	ICD9	Other	Diabetes with hyperosmolarity
-250.3x	ICD9	Other	Diabetes with other coma
-250.4x	ICD9	Other	Diabetes with renal manifestations
-250.5x	ICD9	Other	Diabetes with ophthalmic manifestations
-250.6x	ICD9	Other	Diabetes with neurological manifestation
-250.7x	ICD9	Other	Diabetes with peripheral circulatory disorders
-250.8x	ICD9	Other	Diabetes with other specified manifestations
-250.9x	ICD9	Other	Diabetes with unspecified complications
-250.x0	ICD9	Other	Diabetes – not stated as uncontrolled
-250.x1	ICD9	Other	Diabetes – not stated as uncontrolled
-250.x2	ICD9	Other	Diabetes – uncontrolled
-250.x3	ICD9	Other	Diabetes – uncontrolled
+250.0X	ICD9	Other	Diabetes mellitus without mention of complications
+250.1X	ICD9	Other	Diabetes with ketoacidosis
+250.2X	ICD9	Other	Diabetes with hyperosmolarity
+250.3X	ICD9	Other	Diabetes with other coma
+250.4X	ICD9	Other	Diabetes with renal manifestations
+250.5X	ICD9	Other	Diabetes with ophthalmic manifestations
+250.6X	ICD9	Other	Diabetes with neurological manifestation
+250.7X	ICD9	Other	Diabetes with peripheral circulatory disorders
+250.8X	ICD9	Other	Diabetes with other specified manifestations
+250.9X	ICD9	Other	Diabetes with unspecified complications
+250.X0	ICD9	Other	Diabetes – not stated as uncontrolled
+250.X1	ICD9	Other	Diabetes – not stated as uncontrolled
+250.X2	ICD9	Other	Diabetes – uncontrolled
+250.X3	ICD9	Other	Diabetes – uncontrolled
