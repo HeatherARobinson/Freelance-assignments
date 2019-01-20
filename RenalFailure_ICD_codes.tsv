@@ -22,7 +22,7 @@ N18.5	ICD10	 Chronic kidney disease stage 5
 N18.6	ICD10	 End stage renal disease requiring dialysis
 Z49.01	ICD10	 Encounter for fitting and adjustment of extracorporeal dialysis catheter
 Z49.02	ICD10	 Encounter for fitting and adjustment of peritoneal dialysis catheter
-Z99.2	ICD10	 Dependence on dialysis presence of arteriovenous shunt for dialysis"
+Z99.2	ICD10	 Dependence on dialysis presence of arteriovenous shunt for dialysis
 N18.6	ICD10	 End stage renal disease requiring dialysis
 Z99.2	ICD10	 Dependence on dialysis
 V45.11	ICD9	 Dependence on dialysis
