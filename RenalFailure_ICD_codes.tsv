@@ -1,0 +1,29 @@
+Code	Version	Rubric
+584.5	ICD9	 ARF with lesion of tubular necrosis
+584.6	ICD9	 ARF with lesion of renal cortical necrosis
+584.7	ICD9	 ARF with lesion of renal medullary (papillary) necrosis
+584.8	ICD9	 ARF with other specified pathologic lesion in kidney
+584.9	ICD9	 ARF unspecified
+V39.95	ICD9	 Hemodialysis
+V45.1	ICD9	 Renal dialysis status (patient requires intermittent renal dialysis; presence of arteriovenous shunt)
+V56.0	ICD9	 Extracorporeal dialysis (dialysis [renal] not otherwise specified)
+V56.1	ICD9	 Fitting and adjustment of extracorporeal dialysis catheter
+39.95	ICD9	 Hemodialysis
+54.98	ICD9	 Peritoneal dialysis
+V56.2	ICD9	 Fitting and adjustment of peritoneal dialysis catheter
+V56.31	ICD9	 Encounter for adequacy testing for hemodialysis
+V56.32	ICD9	 Encounter for adequacy testing for peritoneal dialysis
+V56.8	ICD9	 Other dialysis (peritoneal dialysis)
+55.69	ICD9	 Transplant of kidney
+585.X	ICD9	 Chronic kidney disease
+N18.3	ICD10	 Chronic kidney disease stage 3
+N18.4	ICD10	 Chronic kidney disease stage 4
+N18.5	ICD10	 Chronic kidney disease stage 5
+N18.6	ICD10	 End stage renal disease requiring dialysis
+Z49.01	ICD10	 Encounter for fitting and adjustment of extracorporeal dialysis catheter
+Z49.02	ICD10	 Encounter for fitting and adjustment of peritoneal dialysis catheter
+Z99.2	ICD10	 Dependence on dialysis presence of arteriovenous shunt for dialysis"
+N18.6	ICD10	 End stage renal disease requiring dialysis
+Z99.2	ICD10	 Dependence on dialysis
+V45.11	ICD9	 Dependence on dialysis
+Z49.01	ICD10	 Encounter for fitting and adjustment of extracorporeal dialysis catheter
